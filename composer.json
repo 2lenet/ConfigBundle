@@ -1,5 +1,5 @@
 {
-  "name": "2le/ConfigBundle",
+  "name": "2le/config-bundle",
   "type": "symfony-bundle",
   "description": "Config Bundle",
   "homepage": "https://www.2le.net",
@@ -19,12 +19,6 @@
   "autoload": {
     "psr-4": {
       "Lle\\ConfigBundle\\": "src/"
-    }
-  },
-
-  "autoload-dev": {
-    "psr-4": {
-      "Lle\\ConfigBundle\\Tests\\": "src/Tests/"
     }
   },
 
