@@ -49,8 +49,8 @@ class ConfigCrudConfig extends AbstractCrudConfig
                 $groupe,
                 $libelle,
                 //$bool,
-                //$value,
-                $value->setTemplate("config/_value.html.twig"),
+                $value,
+//                $value->setTemplate("config/_value.html.twig"),
             ];
         }
 
