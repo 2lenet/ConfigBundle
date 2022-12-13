@@ -1,5 +1,5 @@
 {
-  "name": "2le/config-bundle",
+  "name": "2lenet/config-bundle",
   "type": "symfony-bundle",
   "description": "Config Bundle",
   "homepage": "https://www.2le.net",
@@ -12,8 +12,6 @@
     }
   ],
   "require": {
-    "symfony/framework-bundle": "^5.0",
-    "symfony/http-client":  "^5.0"
   },
   "minimum-stability": "stable",
   "autoload": {
@@ -23,9 +21,6 @@
   },
 
   "require-dev": {
-    "phpunit/phpunit": "^7.2",
-    "symfony/maker-bundle": "^1.0",
-    "symfony/phpunit-bridge": "^5.1"
   }
 
 }
