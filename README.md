@@ -33,7 +33,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Lle\ConfigBundle\Trait\ConfigTrait;
-use Lle\ConfigBundle\Repository\ConfigRepository;
+use App\Repository\ConfigRepository;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 
 /**
