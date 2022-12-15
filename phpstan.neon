@@ -1,0 +1,21 @@
+includes:
+  - vendor/phpstan/phpstan-phpunit/extension.neon
+  - vendor/phpstan/phpstan-mockery/extension.neon
+  - vendor/phpstan/phpstan-symfony/extension.neon
+  - vendor/phpstan/phpstan-symfony/rules.neon
+  - vendor/phpstan/phpstan-doctrine/extension.neon
+
+parameters:
+  level: 5
+  paths:
+    # - /var/www/html/vendor/2lenet/config-bundle # local
+     - /builds/2lenet/config-bundle #gitlab
+  excludePaths:
+    - vendor/*
+    - tests/*
+    - src/Controller/Crudit/*
+    - src/Crudit/*
+  checkMissingIterableValueType: false
+  checkGenericClassInNonGenericObjectType: false
+#  doctrine:
+#      objectManagerLoader: tests/object-manager.php

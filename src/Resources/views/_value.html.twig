@@ -30,7 +30,7 @@
     </div>
 {% endif %}
 {% if view.resource.valueType == "Text" %}
-    <div class="crudit-eip" data-field="valueString" data-edit_url="/config/editdata/{{ view.resource.id}}">
+    <div class="crudit-eip" data-field="valueText" data-edit_url="/config/editdata/{{ view.resource.id}}">
         <form class="form-inline d-none">
             <div class="control-group form-group d-flex justify-content-around align-items-center">
                 <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off" value="{{ view.resource.valueText }}">
@@ -50,7 +50,7 @@
     </div>
 {% endif %}
 {% if view.resource.valueType == "Int" %}
-    <div class="crudit-eip" data-field="valueString" data-edit_url="/config/editdata/{{ view.resource.id}}">
+    <div class="crudit-eip" data-field="valueInt" data-edit_url="/config/editdata/{{ view.resource.id}}">
         <form class="form-inline d-none">
             <div class="control-group form-group d-flex justify-content-around align-items-center">
                 <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off" value="{{ view.resource.valueInt }}">

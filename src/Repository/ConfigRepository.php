@@ -73,7 +73,7 @@ abstract class ConfigRepository extends ServiceEntityRepository
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::TEXT);
-            $item->setValueString($default);
+            $item->setValueText($default);
             $this->_em->persist($item);
             $this->_em->flush();
         }
@@ -92,12 +92,12 @@ abstract class ConfigRepository extends ServiceEntityRepository
         $item->setValueText($value);
     }
 
-    public function getInt($group, $label, string $default): int
+    public function getInt($group, $label, int $default): int
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::INT);
-            $item->setValueString($default);
+            $item->setValueInt($default);
             $this->_em->persist($item);
             $this->_em->flush();
         }
@@ -105,7 +105,7 @@ abstract class ConfigRepository extends ServiceEntityRepository
         return $item->getValueInt();
     }
 
-    public function setInt($group, $label, string $value): void
+    public function setInt($group, $label, int $value): void
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -122,7 +122,7 @@ abstract class ConfigRepository extends ServiceEntityRepository
         /** @var ConfigInterface $item */
         $item = (new $configClass);
         $item->setGroup($group);
-        $item->setLabel($code);
+        $item->setLabel($label);
         $item->setValueType($valueType);
 
         return $item;
