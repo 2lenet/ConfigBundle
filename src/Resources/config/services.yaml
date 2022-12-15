@@ -1,0 +1,12 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Lle\ConfigBundle\:
+        resource: '../../'
+
+    Lle\ConfigBundle\Repository\:
+        resource: '../../Repository'
+        autoconfigure: true
+        tags: ['doctrine.repository_service']
