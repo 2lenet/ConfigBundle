@@ -55,7 +55,7 @@ namespace App\Repository;
 
 use App\Entity\Config;
 use Doctrine\Persistence\ManagerRegistry;
-use Lle\ConfigBundle\Repository\ConfigRepository as BaseRepository;
+use Lle\ConfigBundle\Repository\AbstractConfigRepository;
 
 /**
  * @method Config|null find($id, $lockMode = null, $lockVersion = null)
@@ -63,7 +63,7 @@ use Lle\ConfigBundle\Repository\ConfigRepository as BaseRepository;
  * @method Config[]    findAll()
  * @method Config[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ConfigRepository extends BaseRepository
+class ConfigRepository extends AbstractConfigRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -124,7 +124,7 @@ class Config
      * @ORM\ManyToOne(targetEntity=Establishment::class, inversedBy="configs")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $establishment;
+    private ?Establishment $establishment;
 
     public function getEstablishment(): ?Establishment
     {

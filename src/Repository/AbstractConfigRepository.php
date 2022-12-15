@@ -2,7 +2,6 @@
 
 namespace Lle\ConfigBundle\Repository;
 
-use App\Entity\Config;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method ConfigInterface[]    findAll()
  * @method ConfigInterface[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-abstract class ConfigRepository extends ServiceEntityRepository
+abstract class AbstractConfigRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry, $entityClass = ConfigInterface::class)
     {
