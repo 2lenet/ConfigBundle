@@ -78,8 +78,9 @@ In your project add the folowing to the config file: `/config/packages/doctrine.
 
 ```yaml
 doctrine:
-    resolve_target_entities:
-        Lle\ConfigBundle\Contracts\ConfigInterface: App\Entity\Config
+    orm:
+        resolve_target_entities:
+            Lle\ConfigBundle\Contracts\ConfigInterface: App\Entity\Config
 ```
 
 In `/config/routes.yaml` add:
@@ -162,7 +163,7 @@ The bundle offer support for configuration in the following formats :
 ### Available methods
 
 ```php
-   public function getBool($group, $label, bool $default): bool
+    public function getBool($group, $label, bool $default): bool
    
     public function setBool(string $group, string $label, bool $value): void
     
