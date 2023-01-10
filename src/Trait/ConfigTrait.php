@@ -1,65 +1,73 @@
 <?php
 
-namespace App\Entity;
+namespace Lle\ConfigBundle\Trait;
 
-use App\Repository\ConfigRepository;
+use Lle\ConfigBundle\Repository\ConfigRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ConfigRepository::class)
- */
-class Config
+trait ConfigTrait
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
+    #[ORM\Column(type: 'string', length: 255)]
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $libelle;
+    private $label;
 
+    #[ORM\Column(type: 'string', length: 255, name: '`group`')]
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, name="`group`")
      */
-    private $groupe;
+    private $group;
 
+    #[ORM\Column(type: 'string', length: 255)]
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $valueType;
 
+    #[ORM\Column(type: "boolean", nullable: true)]
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $valueBool;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $valueString;
 
+    #[ORM\Column(type: "text", nullable: true)]
     /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $valueText;
 
+    #[ORM\Column(type: "integer", nullable: true)]
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $valueInt;
 
+    #[ORM\Column(type: "integer")]
     /**
      * @ORM\Column(type="integer")
      */
-    private $tri;
+    private $tri = 0;
 
     public function __toString()
     {
-        return $this->groupe."/".$this->libelle;
+        return $this->group."/".$this->label;
     }
 
     public function getId(): ?int
@@ -67,26 +75,31 @@ class Config
         return $this->id;
     }
 
-    public function getLibelle(): ?string
+    public function setId(?int $id): void
     {
-        return $this->libelle;
+        $this->id = $id;
     }
 
-    public function setLibelle(string $libelle): self
+    public function getLabel(): ?string
     {
-        $this->libelle = $libelle;
+        return $this->label;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }
 
-    public function getGroupe(): ?string
+    public function getGroup(): ?string
     {
-        return $this->groupe;
+        return $this->group;
     }
 
-    public function setGroupe(string $groupe): self
+    public function setGroup(string $group): self
     {
-        $this->groupe = $groupe;
+        $this->group = $group;
 
         return $this;
     }

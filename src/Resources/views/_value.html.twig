@@ -1,0 +1,71 @@
+{% if view.resource.valueType == "Bool" %}
+    <div class="crudit-eip" data-field="valueBool" data-edit_url="/config/editdata/{{ view.resource.id}}">
+        <div class="form-check form-switch">
+            <input
+                    class="form-check-input crudit-eip-input crudit-eip-submit"
+                    type="checkbox"
+                    autocomplete="off"
+                    id="valueBool" {% if view.resource.valueBool == true %}checked{% endif %}>
+        </div>
+    </div>
+{% endif %}
+{% if view.resource.valueType == "String" %}
+    <div class="crudit-eip" data-field="valueString" data-edit_url="/config/editdata/{{ view.resource.id}}">
+        <form class="form-inline d-none">
+            <div class="control-group form-group d-flex justify-content-around align-items-center">
+                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off" value="{{ view.resource.valueString }}">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary crudit-eip-submit">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-default crudit-eip-cancel">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editable-error-block help-block" style="display: none;">
+            </div>
+        </form>
+        <div class="crudit-eip-value">{{ view.resource.valueString }}</div>
+    </div>
+{% endif %}
+{% if view.resource.valueType == "Text" %}
+    <div class="crudit-eip" data-field="valueText" data-edit_url="/config/editdata/{{ view.resource.id}}">
+        <form class="form-inline d-none">
+            <div class="control-group form-group d-flex justify-content-around align-items-center">
+                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off" value="{{ view.resource.valueText }}">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary crudit-eip-submit">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-default crudit-eip-cancel">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editable-error-block help-block" style="display: none;">
+            </div>
+        </form>
+        <div class="crudit-eip-value">{{ view.resource.valueText }}</div>
+    </div>
+{% endif %}
+{% if view.resource.valueType == "Int" %}
+    <div class="crudit-eip" data-field="valueInt" data-edit_url="/config/editdata/{{ view.resource.id}}">
+        <form class="form-inline d-none">
+            <div class="control-group form-group d-flex justify-content-around align-items-center">
+                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off" value="{{ view.resource.valueInt }}">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary crudit-eip-submit">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-default crudit-eip-cancel">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editable-error-block help-block" style="display: none;">
+            </div>
+        </form>
+        <div class="crudit-eip-value">{{ view.resource.valueInt }}</div>
+    </div>
+{% endif %}

@@ -2,21 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Crudit\Config;
+namespace Lle\ConfigBundle\Crudit\Config;
 
 use Lle\CruditBundle\Dto\Field\Field;
-use Lle\CruditBundle\Brick\LinksBrick\LinksConfig;
-use Lle\CruditBundle\Brick\ListBrick\ListConfig;
-use Lle\CruditBundle\Brick\ShowBrick\ShowConfig;
-use Lle\CruditBundle\Brick\FormBrick\FormConfig;
 use Lle\CruditBundle\Crud\AbstractCrudConfig;
-use Lle\CruditBundle\Contracts\DatasourceInterface;
-use Lle\CruditBundle\Dto\Action\ListAction;
-use Lle\CruditBundle\Dto\Action\ItemAction;
-use Symfony\Component\HttpFoundation\Request;
 use Lle\CruditBundle\Contracts\CrudConfigInterface;
-use App\Form\ConfigType;
-use App\Crudit\Datasource\ConfigDatasource;
+use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
 
 class ConfigCrudConfig extends AbstractCrudConfig
 {
@@ -39,18 +30,15 @@ class ConfigCrudConfig extends AbstractCrudConfig
 
     public function getFields($key): array
     {
-        $groupe = Field::new('groupe')->setRuptGroup(1);
-        $libelle = Field::new('libelle');
+        $group = Field::new('group')->setRuptGroup(1);
+        $label = Field::new('label');
         $value = Field::new('valueType')->setLabel('field.value');
-        $bool = Field::new('valueBool')->setEditable("app_crudit_config_editdata");
         // you can return different fields based on the block key
         if ($key == CrudConfigInterface::INDEX || $key == CrudConfigInterface::SHOW) {
             return [
-                $groupe,
-                $libelle,
-                //$bool,
-                $value,
-//                $value->setTemplate("config/_value.html.twig"),
+                $group,
+                $label,
+                $value->setTemplate("@LleConfig/_value.html.twig"),
             ];
         }
 
@@ -59,7 +47,6 @@ class ConfigCrudConfig extends AbstractCrudConfig
 
     public function getRootRoute(): string
     {
-        return 'app_crudit_config';
+        return 'lle_config_crudit_config';
     }
-
 }

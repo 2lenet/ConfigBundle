@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Controller\Crudit;
+namespace Lle\ConfigBundle\Controller\Crudit;
 
-use App\Crudit\Config\ConfigCrudConfig;
+use Lle\ConfigBundle\Crudit\Config\ConfigCrudConfig;
 use Lle\CruditBundle\Controller\AbstractCrudController;
 use Lle\CruditBundle\Controller\TraitCrudController;
 use Symfony\Component\Routing\Annotation\Route;

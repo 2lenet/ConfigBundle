@@ -1,0 +1,3 @@
+config_routes:
+    resource: '@LleConfigBundle/Controller/Crudit/ConfigController.php'
+    type: annotation
