@@ -176,6 +176,10 @@ The bundle offer support for configuration in the following formats :
     public function setText($group, $label, string $value): void
    
     public function getInt($group, $label, string $default): int
-
 ```
 
+### Twig available function
+
+```twig
+{{ get_config_value('type', 'group', 'label', 'default') }}
+```
