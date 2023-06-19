@@ -37,7 +37,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
         if ($key == CrudConfigInterface::INDEX || $key == CrudConfigInterface::SHOW) {
             return [
                 $group,
-                $label,
+                $label->setTemplate("@LleConfig/_translatable_label.html.twig"),
                 $value->setTemplate("@LleConfig/_value.html.twig"),
             ];
         }
