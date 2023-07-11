@@ -126,4 +126,20 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         return $item;
     }
+
+    public function hasConfig(string $group, string $label): bool
+    {
+        $count = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->andWhere('c.group = :group')
+            ->andWhere('c.label = :label')
+            ->setParameters([
+                'group' => $group,
+                'label' => $label,
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
 }

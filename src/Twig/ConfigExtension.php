@@ -17,7 +17,8 @@ class ConfigExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('get_config_value', [$this, 'getConfigValue'])
+            new TwigFunction('get_config_value', [$this, 'getConfigValue']),
+            new TwigFunction('has_config_value', [$this, 'hasConfigValue'])
         ];
     }
 
@@ -35,5 +36,10 @@ class ConfigExtension extends AbstractExtension
             case ConfigInterface::INT:
                 return $configRepository->getInt($group, $name, $default);
         }
+    }
+
+    public function hasConfigValue(string $group, string $label): bool
+    {
+        return $this->em->getRepository(ConfigInterface::class)->hasConfig($group, $label);
     }
 }
