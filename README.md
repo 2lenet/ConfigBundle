@@ -183,3 +183,31 @@ The bundle offer support for configuration in the following formats :
 ```twig
 {{ get_config_value('type', 'group', 'label', 'default') }}
 ```
+
+### Create config with a service
+If you need to create configuration which can be enabled without using the auto discoverability you can create a class
+that implement `AddConfigInterface` method `getConfigs()` will be executed on the request of config list page. Here is 
+an exemple :
+```php
+<?php
+
+namespace App\Service\Config;
+
+use App\Repository\ConfigRepository;
+use Lle\ConfigBundle\Contracts\AddConfigInterface;
+
+class ConfigService implements AddConfigInterface
+{
+    public function __construct(private ConfigRepository $configRepository)
+    {
+    }
+
+    public function getConfigs(): void
+    {
+        if ($this->configRepository->getBool('Pasta', 'Enable', false)) {
+            $this->configRepository->getBool('Pasta', 'Bolognaise', false);
+            $this->configRepository->getBool('Pasta', 'Carbonara', false);
+        }
+    }
+}
+```
