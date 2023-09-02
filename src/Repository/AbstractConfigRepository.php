@@ -2,9 +2,9 @@
 
 namespace Lle\ConfigBundle\Repository;
 
-use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Lle\ConfigBundle\Contracts\ConfigInterface;
 
 /**
  * @method ConfigInterface|null find($id, $lockMode = null, $lockVersion = null)

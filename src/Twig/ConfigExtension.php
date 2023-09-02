@@ -17,7 +17,7 @@ class ConfigExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('get_config_value', [$this, 'getConfigValue'])
+            new TwigFunction('get_config_value', [$this, 'getConfigValue']),
         ];
     }
 
