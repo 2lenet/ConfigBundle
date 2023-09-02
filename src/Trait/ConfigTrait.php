@@ -2,8 +2,8 @@
 
 namespace Lle\ConfigBundle\Trait;
 
-use Lle\ConfigBundle\Repository\ConfigRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Lle\ConfigBundle\Repository\ConfigRepository;
 
 trait ConfigTrait
 {
@@ -16,49 +16,41 @@ trait ConfigTrait
      * @ORM\Column(type="integer")
      */
     private ?int $id = null;
-
     #[ORM\Column(type: 'string', length: 255)]
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $label;
-
     #[ORM\Column(type: 'string', length: 255, name: '`group`')]
     /**
      * @ORM\Column(type="string", length=255, name="`group`")
      */
     private $group;
-
     #[ORM\Column(type: 'string', length: 255)]
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $valueType;
-
     #[ORM\Column(type: "boolean", nullable: true)]
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $valueBool;
-
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $valueString;
-
     #[ORM\Column(type: "text", nullable: true)]
     /**
      * @ORM\Column(type="text", nullable=true)
      */
     private $valueText;
-
     #[ORM\Column(type: "integer", nullable: true)]
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
     private $valueInt;
-
     #[ORM\Column(type: "integer")]
     /**
      * @ORM\Column(type="integer")
@@ -67,7 +59,7 @@ trait ConfigTrait
 
     public function __toString()
     {
-        return $this->group."/".$this->label;
+        return $this->group . "/" . $this->label;
     }
 
     public function getId(): ?int
