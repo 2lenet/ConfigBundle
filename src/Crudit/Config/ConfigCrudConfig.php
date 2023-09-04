@@ -28,7 +28,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
         return [];
     }
 
-    public function getFields($key): array
+    public function getFields(string $key): array
     {
         $group = Field::new('group')->setRuptGroup(1);
         $label = Field::new('label');

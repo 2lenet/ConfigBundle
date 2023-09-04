@@ -1,6 +1,6 @@
 <?php
 
-namespace Lle\ConfigBundle\Trait;
+namespace Lle\ConfigBundle\Traits;
 
 use Lle\ConfigBundle\Repository\ConfigRepository;
 use Doctrine\ORM\Mapping as ORM;
