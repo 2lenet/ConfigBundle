@@ -28,6 +28,7 @@
   "require": {
     "symfony/orm-pack": "*",
     "symfony/framework-bundle": "^5.0|^6.0",
-    "twig/twig": "^3.4"
+    "twig/twig": "^3.4",
+    "2lenet/crudit-bundle": "^1.4"
   }
 }
