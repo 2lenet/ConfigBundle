@@ -21,3 +21,4 @@ class ConfigController extends AbstractCrudController
         $this->config = $config;
     }
 }
+

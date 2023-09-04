@@ -50,3 +50,4 @@ class ConfigCrudConfig extends AbstractCrudConfig
         return 'lle_config_crudit_config';
     }
 }
+
