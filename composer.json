@@ -35,5 +35,10 @@
         "2lenet/crudit-bundle": "*",
         "symfony/framework-bundle": "^5.0|^6.0",
         "twig/twig": "^3.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
