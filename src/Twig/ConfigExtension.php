@@ -9,9 +9,8 @@ use Twig\TwigFunction;
 
 class ConfigExtension extends AbstractExtension
 {
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     public function getFunctions(): array
@@ -21,7 +20,7 @@ class ConfigExtension extends AbstractExtension
         ];
     }
 
-    public function getConfigValue(string $type, string $group, string $name, mixed $default): bool|string|int
+    public function getConfigValue(string $type, string $group, string $name, mixed $default): bool|string|int|null
     {
         $configRepository = $this->em->getRepository(ConfigInterface::class);
 
@@ -34,6 +33,8 @@ class ConfigExtension extends AbstractExtension
                 return $configRepository->getText($group, $name, $default);
             case ConfigInterface::INT:
                 return $configRepository->getInt($group, $name, $default);
+            default:
+                return null;
         }
     }
 }
