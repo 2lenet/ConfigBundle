@@ -119,7 +119,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
     {
         $configClass = $this->_em->getClassMetadata(ConfigInterface::class)->getName();
         /** @var ConfigInterface $item */
-        $item = (new $configClass);
+        $item = new $configClass();
         $item->setGroup($group);
         $item->setLabel($label);
         $item->setValueType($valueType);
