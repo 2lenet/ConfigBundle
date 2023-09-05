@@ -1,5 +1,10 @@
 # ConfigBundle
 
+[![Validate](https://github.com/2lenet/ConfigBundle/actions/workflows/validate.yml/badge.svg)](https://github.com/2lenet/ConfigBundle/actions/workflows/validate.yml)
+[![.github/workflows/test.yml](https://github.com/2lenet/ConfigBundle/actions/workflows/test.yml/badge.svg)](https://github.com/2lenet/ConfigBundle/actions/workflows/test.yml)
+[![SymfonyInsight](https://insight.symfony.com/projects/79583c27-dbb5-4610-accd-1ee16b92008d/mini.svg)](https://insight.symfony.com/projects/79583c27-dbb5-4610-accd-1ee16b92008d)
+
+
 Symfony bundle that gives you an easy configuration for your app. Perfect to use with the famous
 CRUD [Crudit](https://github.com/2lenet/CruditBundle)
 
