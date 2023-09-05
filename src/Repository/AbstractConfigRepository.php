@@ -19,7 +19,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         parent::__construct($registry, $entityClass);
     }
 
-    public function getBool($group, $label, bool $default): bool
+    public function getBool(string $group, string $label, bool $default): bool
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -43,7 +43,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function getString($group, $label, string $default): string
+    public function getString(string $group, string $label, string $default): string
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -56,7 +56,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueString();
     }
 
-    public function setString($group, $label, string $value): void
+    public function setString(string $group, string $label, string $value): void
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -67,7 +67,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $item->setValueString($value);
     }
 
-    public function getText($group, $label, string $default): string
+    public function getText(string $group, string $label, string $default): string
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -80,7 +80,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueText();
     }
 
-    public function setText($group, $label, string $value): void
+    public function setText(string $group, string $label, string $value): void
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -91,7 +91,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $item->setValueText($value);
     }
 
-    public function getInt($group, $label, int $default): int
+    public function getInt(string $group, string $label, int $default): int
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
@@ -104,7 +104,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueInt();
     }
 
-    public function setInt($group, $label, int $value): void
+    public function setInt(string $group, string $label, int $value): void
     {
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {

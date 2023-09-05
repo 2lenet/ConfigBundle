@@ -1,19 +1,21 @@
+<<<<<<< HEAD
 <?php
 
 declare(strict_types=1);
 
 namespace Lle\ConfigBundle\Crudit\Config;
 
-use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
-use Lle\CruditBundle\Contracts\CrudConfigInterface;
-use Lle\CruditBundle\Crud\AbstractCrudConfig;
 use Lle\CruditBundle\Dto\Field\Field;
+use Lle\CruditBundle\Crud\AbstractCrudConfig;
+use Lle\CruditBundle\Contracts\CrudConfigInterface;
+use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
 
 class ConfigCrudConfig extends AbstractCrudConfig
 {
     public function __construct(
-        ConfigDatasource $datasource,
-    ) {
+        ConfigDatasource $datasource
+    )
+    {
         $this->datasource = $datasource;
     }
 
@@ -27,7 +29,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
         return [];
     }
 
-    public function getFields($key): array
+    public function getFields(string $key): array
     {
         $group = Field::new('group')->setRuptGroup(1);
         $label = Field::new('label');
