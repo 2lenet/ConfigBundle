@@ -4,6 +4,7 @@ namespace Lle\ConfigBundle\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
+use Lle\ConfigBundle\Repository\AbstractConfigRepository;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -22,6 +23,7 @@ class ConfigExtension extends AbstractExtension
 
     public function getConfigValue(string $type, string $group, string $name, mixed $default): bool|string|int|null
     {
+        /** @var AbstractConfigRepository $configRepository */
         $configRepository = $this->em->getRepository(ConfigInterface::class);
 
         switch ($type) {
