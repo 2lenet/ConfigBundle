@@ -5,11 +5,8 @@ namespace Lle\ConfigBundle\Contracts;
 interface ConfigInterface
 {
     public const BOOL = 'Bool';
-
     public const STRING = 'String';
-
     public const TEXT = 'Text';
-
     public const INT = 'Int';
 
     public function __toString();

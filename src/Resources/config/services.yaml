@@ -9,4 +9,4 @@ services:
     Lle\ConfigBundle\Twig\ConfigExtension:
         arguments:
             - '@doctrine.orm.entity_manager'
-        tags: [ twig.extension ]
+        tags: [twig.extension]
