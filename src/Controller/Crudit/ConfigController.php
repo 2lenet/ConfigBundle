@@ -7,11 +7,9 @@ namespace Lle\ConfigBundle\Controller\Crudit;
 use Lle\ConfigBundle\Crudit\Config\ConfigCrudConfig;
 use Lle\CruditBundle\Controller\AbstractCrudController;
 use Lle\CruditBundle\Controller\TraitCrudController;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/config")
- */
+#[Route('/config')]
 class ConfigController extends AbstractCrudController
 {
     use TraitCrudController;
