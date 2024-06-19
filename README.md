@@ -42,7 +42,7 @@ needed you can use:
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Lle\ConfigBundle\Trait\ConfigTrait;
+use Lle\ConfigBundle\Traits\ConfigTrait;
 use App\Repository\ConfigRepository;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 
