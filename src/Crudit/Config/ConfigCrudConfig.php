@@ -45,7 +45,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
                 '',
                 Path::new('lle_config_crudit_config_refreshcache'),
                 Icon::new('sync')
-            )->setHideLabel(true)
+            )->setHideLabel(true)->setRole('ROLE_CONFIG_REFRESH_CACHE')
         ];
     }
 
