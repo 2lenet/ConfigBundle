@@ -25,7 +25,7 @@ class WarmupCommand extends Command
         parent::__construct(null);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var AbstractConfigRepository $configRepository */
         $configRepository = $this->em->getRepository(ConfigInterface::class);
