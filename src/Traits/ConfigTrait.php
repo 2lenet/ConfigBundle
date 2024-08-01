@@ -3,6 +3,7 @@
 namespace Lle\ConfigBundle\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
+use Lle\ConfigBundle\Contracts\ConfigInterface;
 
 trait ConfigTrait
 {
@@ -59,6 +60,28 @@ trait ConfigTrait
     public function __toString()
     {
         return $this->group . "/" . $this->label;
+    }
+
+    public function getValue(): int|string|bool|null
+    {
+        switch ($this->valueType) {
+            case ConfigInterface::INT:
+                $result = $this->getValueInt();
+                break;
+            case ConfigInterface::BOOL:
+                $result = $this->getValueBool();
+                break;
+            case ConfigInterface::TEXT:
+                $result = $this->getValueText();
+                break;
+            case ConfigInterface::STRING:
+                $result = $this->getValueString();
+                break;
+            default:
+                $result = null;
+        }
+
+        return $result;
     }
 
     public function getId(): ?int
