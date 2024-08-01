@@ -62,28 +62,6 @@ trait ConfigTrait
         return $this->group . "/" . $this->label;
     }
 
-    public function getValue(): int|string|bool|null
-    {
-        switch ($this->valueType) {
-            case ConfigInterface::INT:
-                $result = $this->getValueInt();
-                break;
-            case ConfigInterface::BOOL:
-                $result = $this->getValueBool();
-                break;
-            case ConfigInterface::TEXT:
-                $result = $this->getValueText();
-                break;
-            case ConfigInterface::STRING:
-                $result = $this->getValueString();
-                break;
-            default:
-                $result = null;
-        }
-
-        return $result;
-    }
-
     public function getId(): ?int
     {
         return $this->id;

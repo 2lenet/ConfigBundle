@@ -14,4 +14,4 @@ services:
     _instanceof:
         Lle\ConfigBundle\Repository\AbstractConfigRepository:
             calls:
-                - setCache: ['@Psr\Cache\CacheItemPoolInterface']
+                - setCache: ['@Lle\ConfigBundle\Service\CacheManager']
