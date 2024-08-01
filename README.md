@@ -11,6 +11,7 @@ CRUD [Crudit](https://github.com/2lenet/CruditBundle)
 - [Installation](#Installation)
 - [Customization](#Customization)
 - [Usage](#Usage)
+- [Initialise new configurations (Warm-up)](#initialise-new-configurations-warm-up)
 
 ## Installation
 
@@ -125,12 +126,13 @@ namespace App\Entity;
 
 use App\Repository\ConfigRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Lle\ConfigBundle\Trait\ConfigTrait;
+use Lle\ConfigBundle\Contracts\ConfigInterface;
+use Lle\ConfigBundle\Traits\ConfigTrait;
 
 /**
  * @ORM\Entity(repositoryClass=ConfigRepository::class)
  */
-class Config
+class Config implements ConfigInterface
 {
     use ConfigTrait;
 
@@ -162,13 +164,13 @@ project. Don't forget to update the namspace used in your entity (see previous e
 
 ### General overview
 
-To use the bundle inject in your services the config repository an use one of
+To use the bundle, inject in your services the config repository and use one of
 the [available methods](#Available-methods).
-The bundle will check if the configuration exist if not a new configuration will be created.
+The bundle will check if the configuration exist otherwise a new configuration will be created.
 
 ### Supported configurations
 
-The bundle offer support for configuration in the following formats :
+The bundle offers support for configuration in the following formats :
 
 - boolean
 - string
@@ -193,8 +195,37 @@ The bundle offer support for configuration in the following formats :
     public function getInt($group, $label, string $default): int
 ```
 
-### Twig available function
+### Twig integration
 
 ```twig
 {{ get_config_value('type', 'group', 'label', 'default') }}
 ```
+
+### Initialise new configurations (Warm-up)
+
+A command allows you to initialise new configurations. We suggest to execute it everytime your app starts.
+
+```
+bin/console lle:config:warmup
+```
+
+To configure the default values, create a class that implements WarmupInterface.
+
+```php
+<?php
+
+namespace App\Warmup;
+
+use Lle\ConfigBundle\Contracts\WarmupInterface;
+use Lle\ConfigBundle\Repository\AbstractConfigRepository;
+
+class ConfigWarmup implements WarmupInterface
+{
+    public function warmup(AbstractConfigRepository $configRepository): void
+    {
+        $configRepository->getBool('CONFIG', 'active', true);
+    }
+}
+```
+
+Do not use set*(), because it will overwrite defined configurations.
