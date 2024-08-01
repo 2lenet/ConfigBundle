@@ -3,7 +3,6 @@
 namespace Lle\ConfigBundle\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
-use Lle\ConfigBundle\Contracts\ConfigInterface;
 
 trait ConfigTrait
 {

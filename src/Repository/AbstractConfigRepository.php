@@ -6,7 +6,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Service\CacheManager;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\Service\Attribute\Required;
 
 /**
