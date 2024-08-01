@@ -43,8 +43,6 @@ class CacheManager
         if ($value !== null) {
             $item->set($value);
             $this->cache->save($item);
-        } else {
-            $this->cache->deleteItem($item);
         }
     }
 
