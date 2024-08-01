@@ -5,6 +5,8 @@ namespace Lle\ConfigBundle\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
+use Lle\ConfigBundle\Service\CacheManager;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * @method ConfigInterface|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,6 +16,8 @@ use Lle\ConfigBundle\Contracts\ConfigInterface;
  */
 abstract class AbstractConfigRepository extends ServiceEntityRepository
 {
+    private CacheManager $cache;
+
     public function __construct(ManagerRegistry $registry, $entityClass = ConfigInterface::class)
     {
         parent::__construct($registry, $entityClass);
@@ -21,6 +25,11 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
     public function getBool(string $group, string $label, bool $default): bool
     {
+        $cached = $this->cache->get($group, $label, ConfigInterface::BOOL);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::BOOL);
@@ -28,6 +37,8 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->_em->persist($item);
             $this->_em->flush();
         }
+
+        $this->cache->set($item);
 
         return $item->getValueBool();
     }
@@ -41,10 +52,17 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         }
         $item->setValueBool($value);
         $this->_em->flush();
+
+        $this->cache->set($item);
     }
 
     public function getString(string $group, string $label, string $default): string
     {
+        $cached = $this->cache->get($group, $label, ConfigInterface::STRING);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::STRING);
@@ -52,6 +70,8 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->_em->persist($item);
             $this->_em->flush();
         }
+
+        $this->cache->set($item);
 
         return $item->getValueString();
     }
@@ -62,13 +82,20 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::STRING);
             $this->_em->persist($item);
-            $this->_em->flush();
         }
         $item->setValueString($value);
+        $this->_em->flush();
+
+        $this->cache->set($item);
     }
 
     public function getText(string $group, string $label, string $default): string
     {
+        $cached = $this->cache->get($group, $label, ConfigInterface::TEXT);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::TEXT);
@@ -76,6 +103,8 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->_em->persist($item);
             $this->_em->flush();
         }
+
+        $this->cache->set($item);
 
         return $item->getValueText();
     }
@@ -86,13 +115,20 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::TEXT);
             $this->_em->persist($item);
-            $this->_em->flush();
         }
         $item->setValueText($value);
+        $this->_em->flush();
+
+        $this->cache->set($item);
     }
 
     public function getInt(string $group, string $label, int $default): int
     {
+        $cached = $this->cache->get($group, $label, ConfigInterface::INT);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         $item = $this->findOneBy(["group" => $group, "label" => $label]);
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::INT);
@@ -100,6 +136,8 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->_em->persist($item);
             $this->_em->flush();
         }
+
+        $this->cache->set($item);
 
         return $item->getValueInt();
     }
@@ -110,9 +148,11 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::INT);
             $this->_em->persist($item);
-            $this->_em->flush();
         }
         $item->setValueInt($value);
+        $this->_em->flush();
+
+        $this->cache->set($item);
     }
 
     private function createConfig(string $group, string $label, string $valueType): ConfigInterface
@@ -125,5 +165,11 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $item->setValueType($valueType);
 
         return $item;
+    }
+
+    #[Required]
+    public function setCache(CacheManager $cache): void
+    {
+        $this->cache = $cache;
     }
 }
