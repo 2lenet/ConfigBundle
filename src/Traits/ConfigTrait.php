@@ -9,56 +9,38 @@ trait ConfigTrait
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
     private ?int $id = null;
-    #[ORM\Column(type: 'string', length: 255)]
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $label;
-    #[ORM\Column(type: 'string', length: 255, name: '`group`')]
-    /**
-     * @ORM\Column(type="string", length=255, name="`group`")
-     */
-    private $group;
-    #[ORM\Column(type: 'string', length: 255)]
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $valueType;
-    #[ORM\Column(type: "boolean", nullable: true)]
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $valueBool;
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $valueString;
-    #[ORM\Column(type: "text", nullable: true)]
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $valueText;
-    #[ORM\Column(type: "integer", nullable: true)]
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $valueInt;
-    #[ORM\Column(type: "integer")]
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $tri = 0;
 
-    public function __toString()
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $label = null;
+
+    #[ORM\Column(type: 'string', length: 255, name: '`group`')]
+    private ?string $group = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $valueType = null;
+
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $valueBool = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $valueString = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $valueText = null;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $valueInt = null;
+
+    #[ORM\Column(type: 'integer')]
+    private int $tri = 0;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $tenantId = null;
+
+    public function __toString(): string
     {
-        return $this->group . "/" . $this->label;
+        return $this->group . '/' . $this->label;
     }
 
     public function getId(): ?int
@@ -163,6 +145,18 @@ trait ConfigTrait
     public function setTri(int $tri): self
     {
         $this->tri = $tri;
+
+        return $this;
+    }
+
+    public function getTenantId(): ?int
+    {
+        return $this->tenantId;
+    }
+
+    public function setTenantId(?int $tenantId): self
+    {
+        $this->tenantId = $tenantId;
 
         return $this;
     }

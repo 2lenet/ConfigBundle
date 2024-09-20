@@ -44,4 +44,8 @@ interface ConfigInterface
     public function getTri(): ?int;
 
     public function setTri(int $tri): self;
+
+    public function getTenantId(): ?int;
+
+    public function setTenantId(int $tenantId): self;
 }

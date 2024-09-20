@@ -21,7 +21,7 @@ class ConfigExtension extends AbstractExtension
         ];
     }
 
-    public function getConfigValue(string $type, string $group, string $name, mixed $default): bool|string|int|null
+    public function getConfigValue(string $type, string $group, string $name, mixed $default = null): bool|string|int|null
     {
         /** @var AbstractConfigRepository $configRepository */
         $configRepository = $this->em->getRepository(ConfigInterface::class);
