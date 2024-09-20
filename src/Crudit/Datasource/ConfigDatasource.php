@@ -74,7 +74,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
             ]);
 
             if ($configWithTenant) {
-                /** @var $configWithTenant ConfigInterface */
+                /** @var ConfigInterface $configWithTenant */
                 $configWithTenant
                     ->setValueType($resource->getValueType())
                     ->setValueBool($resource->getValueBool())
