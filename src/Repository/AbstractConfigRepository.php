@@ -275,17 +275,4 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
     {
         $this->cache = $cache;
     }
-
-    public function findConfigByTenant(ConfigInterface $config, int $tenantId): ?ConfigInterface
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.label = :label')
-            ->andWhere('c.group = :group')
-            ->andWhere('c.tenantId = :tenant')
-            ->setParameter('label', $config->getLabel())
-            ->setParameter('group', $config->getGroup())
-            ->setParameter('tenant', $tenantId)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 }

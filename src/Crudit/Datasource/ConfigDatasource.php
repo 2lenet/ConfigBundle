@@ -61,14 +61,17 @@ class ConfigDatasource extends AbstractDoctrineDatasource
     {
         /** @var bool $usingTenant */
         $usingTenant = $this->parameterBag->get('lle_config.using_tenant');
-        if (!$usingTenant || ($usingTenant && $resource->getTenantId() === $this->tenantService->getTenantId())) {
+        if ($usingTenant === false || ($usingTenant && $resource->getTenantId() === $this->tenantService->getTenantId())) {
             parent::save($resource);
 
             /** @var ConfigInterface $resource */
             $this->cache->set($resource);
         } else {
-            $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)
-                ->findConfigByTenant($resource, $this->tenantService->getTenantId());
+            $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)->findBy([
+                'label' => $resource->getLabel(),
+                'group' => $resource->getGroup(),
+                'tenantId' => $this->tenantService->getTenantId()
+            ]);
 
             if ($configWithTenant) {
                 $configWithTenant
