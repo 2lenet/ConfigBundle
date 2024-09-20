@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Lle\ConfigBundle\Crudit\Datasource;
 
-use App\Entity\Config;
 use Doctrine\ORM\EntityManagerInterface;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Contracts\TenantInterface;
-use Lle\ConfigBundle\Service\CacheManager;
 use Lle\CruditBundle\Datasource\AbstractDoctrineDatasource;
 use Lle\CruditBundle\Datasource\DatasourceParams;
 use Lle\CruditBundle\Filter\FilterState;
+use Lle\ConfigBundle\Service\CacheManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ConfigDatasource extends AbstractDoctrineDatasource
@@ -35,7 +34,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
 
     public function list(?DatasourceParams $requestParams): iterable
     {
-        /** @var Config[] $list */
+        /** @var ConfigInterface[] $list */
         $list = parent::list($requestParams);
 
         $resultWithTenant = [];
@@ -68,7 +67,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
             /** @var ConfigInterface $resource */
             $this->cache->set($resource);
         } else {
-            $configWithTenant = $this->entityManager->getRepository(Config::class)
+            $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)
                 ->findConfigByTenant($resource, $this->tenantService->getTenantId());
 
             if ($configWithTenant) {
@@ -86,7 +85,8 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                 /** @var ConfigInterface $resource */
                 $this->cache->set($configWithTenant);
             } else {
-                $config = new Config();
+                /** @var ConfigInterface $config */
+                $config = $this->newInstance();
                 $config
                     ->setLabel($resource->getLabel())
                     ->setGroup($resource->getGroup())
