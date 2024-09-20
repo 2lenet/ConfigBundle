@@ -30,7 +30,7 @@ class ConfigController extends AbstractCrudController
     public function refreshCache(): Response
     {
         $this->denyAccessUnlessGranted('ROLE_CONFIG_REFRESH_CACHE');
-        
+
         $configs = $this->em->getRepository(ConfigInterface::class)
             ->findAll();
         foreach ($configs as $config) {

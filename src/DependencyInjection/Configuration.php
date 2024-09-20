@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lle\ConfigBundle\DependencyInjection;
 
-use Lle\CruditBundle\Field\AbstractField;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
