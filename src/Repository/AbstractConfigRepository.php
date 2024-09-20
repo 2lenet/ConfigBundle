@@ -2,7 +2,6 @@
 
 namespace Lle\ConfigBundle\Repository;
 
-use App\Entity\Config;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
@@ -277,7 +276,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache = $cache;
     }
 
-    public function findConfigByTenant(Config $config, int $tenantId): ?Config
+    public function findConfigByTenant(ConfigInterface $config, int $tenantId): ?ConfigInterface
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.label = :label')
