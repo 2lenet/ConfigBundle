@@ -122,7 +122,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function initString(string $group, string $label, bool $default, ?int $tenantId = null): string
+    public function initString(string $group, string $label, string $default, ?int $tenantId = null): string
     {
         if (!$tenantId) {
             $item = $this->findOneBy(['group' => $group, 'label' => $label]);
@@ -180,7 +180,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function initText(string $group, string $label, bool $default, ?int $tenantId = null): string
+    public function initText(string $group, string $label, string $default, ?int $tenantId = null): string
     {
         if (!$tenantId) {
             $item = $this->findOneBy(['group' => $group, 'label' => $label]);
@@ -238,7 +238,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function initInt(string $group, string $label, bool $default, ?int $tenantId = null): int
+    public function initInt(string $group, string $label, int $default, ?int $tenantId = null): int
     {
         if (!$tenantId) {
             $item = $this->findOneBy(['group' => $group, 'label' => $label]);
