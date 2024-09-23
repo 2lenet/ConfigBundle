@@ -23,16 +23,20 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         parent::__construct($registry, $entityClass);
     }
 
-    public function getBool(string $group, string $label, bool $default): bool
+    public function getBool(string $group, string $label, bool $default, ?int $tenantId = null): bool
     {
-        $cached = $this->cache->get($group, $label, ConfigInterface::BOOL);
+        $cached = $this->cache->get($group, $label, ConfigInterface::BOOL, $tenantId);
         if ($cached !== null) {
             return $cached;
         }
 
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::BOOL);
+            $item = $this->createConfig($group, $label, ConfigInterface::BOOL, $tenantId);
             $item->setValueBool($default);
             $this->_em->persist($item);
             $this->_em->flush();
@@ -43,11 +47,15 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueBool();
     }
 
-    public function setBool(string $group, string $label, bool $value): void
+    public function setBool(string $group, string $label, bool $value, ?int $tenantId = null): void
     {
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::BOOL);
+            $item = $this->createConfig($group, $label, ConfigInterface::BOOL, $tenantId);
             $this->_em->persist($item);
         }
         $item->setValueBool($value);
@@ -56,16 +64,37 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function getString(string $group, string $label, string $default): string
+    public function initBool(string $group, string $label, bool $default, ?int $tenantId = null): bool
     {
-        $cached = $this->cache->get($group, $label, ConfigInterface::STRING);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::BOOL, $tenantId);
+            $item->setValueBool($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueBool();
+    }
+
+    public function getString(string $group, string $label, string $default, ?int $tenantId = null): string
+    {
+        $cached = $this->cache->get($group, $label, ConfigInterface::STRING, $tenantId);
         if ($cached !== null) {
             return $cached;
         }
 
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::STRING);
+            $item = $this->createConfig($group, $label, ConfigInterface::STRING, $tenantId);
             $item->setValueString($default);
             $this->_em->persist($item);
             $this->_em->flush();
@@ -76,11 +105,15 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueString();
     }
 
-    public function setString(string $group, string $label, string $value): void
+    public function setString(string $group, string $label, string $value, ?int $tenantId = null): void
     {
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::STRING);
+            $item = $this->createConfig($group, $label, ConfigInterface::STRING, $tenantId);
             $this->_em->persist($item);
         }
         $item->setValueString($value);
@@ -89,16 +122,37 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function getText(string $group, string $label, string $default): string
+    public function initString(string $group, string $label, string $default, ?int $tenantId = null): string
     {
-        $cached = $this->cache->get($group, $label, ConfigInterface::TEXT);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::STRING, $tenantId);
+            $item->setValueString($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueString();
+    }
+
+    public function getText(string $group, string $label, string $default, ?int $tenantId = null): string
+    {
+        $cached = $this->cache->get($group, $label, ConfigInterface::TEXT, $tenantId);
         if ($cached !== null) {
             return $cached;
         }
 
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::TEXT);
+            $item = $this->createConfig($group, $label, ConfigInterface::TEXT, $tenantId);
             $item->setValueText($default);
             $this->_em->persist($item);
             $this->_em->flush();
@@ -109,11 +163,15 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueText();
     }
 
-    public function setText(string $group, string $label, string $value): void
+    public function setText(string $group, string $label, string $value, ?int $tenantId = null): void
     {
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::TEXT);
+            $item = $this->createConfig($group, $label, ConfigInterface::TEXT, $tenantId);
             $this->_em->persist($item);
         }
         $item->setValueText($value);
@@ -122,16 +180,37 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    public function getInt(string $group, string $label, int $default): int
+    public function initText(string $group, string $label, string $default, ?int $tenantId = null): string
     {
-        $cached = $this->cache->get($group, $label, ConfigInterface::INT);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::TEXT, $tenantId);
+            $item->setValueText($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueText();
+    }
+
+    public function getInt(string $group, string $label, int $default, ?int $tenantId = null): int
+    {
+        $cached = $this->cache->get($group, $label, ConfigInterface::INT, $tenantId);
         if ($cached !== null) {
             return $cached;
         }
 
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::INT);
+            $item = $this->createConfig($group, $label, ConfigInterface::INT, $tenantId);
             $item->setValueInt($default);
             $this->_em->persist($item);
             $this->_em->flush();
@@ -142,11 +221,15 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueInt();
     }
 
-    public function setInt(string $group, string $label, int $value): void
+    public function setInt(string $group, string $label, int $value, ?int $tenantId = null): void
     {
-        $item = $this->findOneBy(["group" => $group, "label" => $label]);
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
         if (!$item) {
-            $item = $this->createConfig($group, $label, ConfigInterface::INT);
+            $item = $this->createConfig($group, $label, ConfigInterface::INT, $tenantId);
             $this->_em->persist($item);
         }
         $item->setValueInt($value);
@@ -155,14 +238,34 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
-    private function createConfig(string $group, string $label, string $valueType): ConfigInterface
+    public function initInt(string $group, string $label, int $default, ?int $tenantId = null): int
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::INT, $tenantId);
+            $item->setValueInt($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueInt();
+    }
+
+    private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
     {
         $configClass = $this->_em->getClassMetadata(ConfigInterface::class)->getName();
+
         /** @var ConfigInterface $item */
         $item = new $configClass();
-        $item->setGroup($group);
-        $item->setLabel($label);
-        $item->setValueType($valueType);
+        $item
+            ->setGroup($group)
+            ->setLabel($label)
+            ->setValueType($valueType)
+            ->setTenantId($tenantId);
 
         return $item;
     }

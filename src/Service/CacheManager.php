@@ -14,11 +14,11 @@ class CacheManager
 
     public function set(ConfigInterface $config): void
     {
-        $cacheKey = sprintf(
-            'lle_config_cache_%s_%s_%s',
+        $cacheKey = $this->generateCacheKey(
             $config->getGroup(),
             $config->getLabel(),
             $config->getValueType(),
+            $config->getTenantId(),
         );
 
         $item = $this->cache->getItem($cacheKey);
@@ -46,13 +46,13 @@ class CacheManager
         }
     }
 
-    public function get(string $group, string $label, string $valueType): int|string|bool|null
+    public function get(string $group, string $label, string $valueType, ?int $tenantId = null): int|string|bool|null
     {
-        $cacheKey = sprintf(
-            'lle_config_cache_%s_%s_%s',
+        $cacheKey = $this->generateCacheKey(
             $group,
             $label,
             $valueType,
+            $tenantId
         );
 
         $item = $this->cache->getItem($cacheKey);
@@ -61,5 +61,27 @@ class CacheManager
         }
 
         return null;
+    }
+
+    public function generateCacheKey(string $group, string $label, string $valueType, ?int $tenantId = null): string
+    {
+        if ($tenantId) {
+            $cacheKey = sprintf(
+                'lle_config_cache_%s_%s_%s_%s',
+                $group,
+                $label,
+                $valueType,
+                $tenantId,
+            );
+        } else {
+            $cacheKey = sprintf(
+                'lle_config_cache_%s_%s_%s',
+                $group,
+                $label,
+                $valueType,
+            );
+        }
+
+        return $cacheKey;
     }
 }

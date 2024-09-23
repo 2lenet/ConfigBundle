@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Lle\ConfigBundle\Crudit\Config;
 
-use Lle\CruditBundle\Dto\Action\ListAction;
 use Lle\CruditBundle\Dto\Field\Field;
 use Lle\CruditBundle\Crud\AbstractCrudConfig;
 use Lle\CruditBundle\Contracts\CrudConfigInterface;
 use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
-use Lle\CruditBundle\Dto\Icon;
-use Lle\CruditBundle\Dto\Path;
 
 class ConfigCrudConfig extends AbstractCrudConfig
 {
@@ -40,13 +37,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
 
     public function getListActions(): array
     {
-        return [
-            ListAction::new(
-                '',
-                Path::new('lle_config_crudit_config_refreshcache'),
-                Icon::new('sync')
-            )->setHideLabel(true)->setRole('ROLE_CONFIG_REFRESH_CACHE')
-        ];
+        return [];
     }
 
     public function getItemActions(): array

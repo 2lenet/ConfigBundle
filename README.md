@@ -223,7 +223,7 @@ class ConfigWarmup implements WarmupInterface
 {
     public function warmup(AbstractConfigRepository $configRepository): void
     {
-        $configRepository->getBool('CONFIG', 'active', true);
+        $configRepository->initBool('CONFIG', 'active', true);
     }
 }
 ```
