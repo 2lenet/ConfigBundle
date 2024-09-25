@@ -15,7 +15,3 @@ services:
         arguments:
             $tenantService: '@lle_config.tenant_service'
 
-    _instanceof:
-        Lle\ConfigBundle\Repository\AbstractConfigRepository:
-            calls:
-                - setCache: ['@Lle\ConfigBundle\Service\CacheManager']
