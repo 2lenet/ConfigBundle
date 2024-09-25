@@ -13,5 +13,5 @@ services:
 
     Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource:
         arguments:
-            $tenantService: '@lle_config.tenant_service'
+            $tenantService: '@?lle_config.tenant_service'
 
