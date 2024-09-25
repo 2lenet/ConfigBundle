@@ -18,9 +18,9 @@ class ConfigDatasource extends AbstractDoctrineDatasource
     public function __construct(
         EntityManagerInterface $entityManager,
         FilterState $filterState,
-        private CacheManager $cache,
-        private ParameterBagInterface $parameterBag,
-        private TenantInterface $tenantService,
+        protected CacheManager $cache,
+        protected ParameterBagInterface $parameterBag,
+        protected ?TenantInterface $tenantService = null,
     ) {
         parent::__construct($entityManager, $filterState);
     }
@@ -61,7 +61,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
     {
         /** @var bool $usingTenant */
         $usingTenant = $this->parameterBag->get('lle_config.using_tenant');
-        if (!$usingTenant || $resource->getTenantId() === $this->tenantService->getTenantId()) {
+        if (!$usingTenant || ($this->tenantService && $resource->getTenantId() === $this->tenantService->getTenantId())) {
             parent::save($resource);
 
             /** @var ConfigInterface $resource */
@@ -70,7 +70,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
             $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)->findBy([
                 'label' => $resource->getLabel(),
                 'group' => $resource->getGroup(),
-                'tenantId' => $this->tenantService->getTenantId()
+                'tenantId' => $this->tenantService ? $this->tenantService->getTenantId() : null
             ]);
 
             if ($configWithTenant) {
@@ -100,7 +100,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                     ->setValueText($resource->getValueText())
                     ->setValueInt($resource->getValueInt())
                     ->setTri($resource->getTri())
-                    ->setTenantId($this->tenantService->getTenantId());
+                    ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null);
 
                 $this->entityManager->refresh($resource);
 
