@@ -18,8 +18,9 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 {
     private CacheManager $cache;
 
-    public function __construct(ManagerRegistry $registry, $entityClass = ConfigInterface::class)
+    public function __construct(CacheManager $cache, ManagerRegistry $registry, $entityClass = ConfigInterface::class)
     {
+        $this->cache = $cache;
         parent::__construct($registry, $entityClass);
     }
 
