@@ -26,6 +26,8 @@ class LleConfigExtension extends Extension
         $processedConfig = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('lle_config.using_tenant', $processedConfig['using_tenant']);
-        $container->setAlias('lle_config.tenant_service', $processedConfig['tenant_service']);
+        if ($processedConfig['tenant_service']) {
+            $container->setAlias('lle_config.tenant_service', $processedConfig['tenant_service']);
+        }
     }
 }
