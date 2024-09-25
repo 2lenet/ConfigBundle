@@ -16,7 +16,7 @@ use Symfony\Contracts\Service\Attribute\Required;
  */
 abstract class AbstractConfigRepository extends ServiceEntityRepository
 {
-    private CacheManager $cache;
+    protected CacheManager $cache;
 
     public function __construct(CacheManager $cache, ManagerRegistry $registry, $entityClass = ConfigInterface::class)
     {
