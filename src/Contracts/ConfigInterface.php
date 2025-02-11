@@ -8,6 +8,7 @@ interface ConfigInterface
     public const STRING = 'String';
     public const TEXT = 'Text';
     public const INT = 'Int';
+    public const PASSWORD = 'Password';
 
     public function __toString();
 

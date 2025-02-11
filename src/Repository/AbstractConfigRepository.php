@@ -256,6 +256,64 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueInt();
     }
 
+    public function getPassword(string $group, string $label, string $default, ?int $tenantId = null): string
+    {
+        $cached = $this->cache->get($group, $label, ConfigInterface::STRING, $tenantId);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
+            $item->setValueString($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        $this->cache->set($item);
+
+        return $item->getValueString();
+    }
+
+    public function setPassword(string $group, string $label, string $value, ?int $tenantId = null): void
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
+            $this->_em->persist($item);
+        }
+        $item->setValueString($value);
+        $this->_em->flush();
+
+        $this->cache->set($item);
+    }
+
+    public function initPassword(string $group, string $label, string $default, ?int $tenantId = null): string
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
+            $item->setValueString($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueString();
+    }
+
     private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
     {
         $configClass = $this->_em->getClassMetadata(ConfigInterface::class)->getName();
