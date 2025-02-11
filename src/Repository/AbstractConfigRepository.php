@@ -297,6 +297,23 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         $this->cache->set($item);
     }
 
+    public function initPassword(string $group, string $label, string $default, ?int $tenantId = null): string
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
+            $item->setValueString($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueString();
+    }
+
     private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
     {
         $configClass = $this->_em->getClassMetadata(ConfigInterface::class)->getName();
