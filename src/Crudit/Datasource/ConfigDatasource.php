@@ -59,8 +59,8 @@ class ConfigDatasource extends AbstractDoctrineDatasource
      */
     public function save(object $resource): void
     {
-        // input type password set null on empty field
-        if ($resource->getValueType() === ConfigInterface::PASSWORD && !$resource->getValueString()) {
+        // input type password or string set null on empty field
+        if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && !$resource->getValueString()) {
             $resource->setValueString('');
         }
 
