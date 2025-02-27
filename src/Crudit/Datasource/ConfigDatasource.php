@@ -59,6 +59,11 @@ class ConfigDatasource extends AbstractDoctrineDatasource
      */
     public function save(object $resource): void
     {
+        // input type password or string set null on empty field
+        if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && !$resource->getValueString()) {
+            $resource->setValueString('');
+        }
+
         /** @var bool $usingTenant */
         $usingTenant = $this->parameterBag->get('lle_config.using_tenant');
         if (!$usingTenant || ($this->tenantService && $resource->getTenantId() === $this->tenantService->getTenantId())) {
