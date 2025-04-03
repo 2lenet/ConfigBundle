@@ -105,3 +105,25 @@
         <div class="crudit-eip-value">{{ view.resource.valueInt }}</div>
     </div>
 {% endif %}
+{% if view.resource.valueType == constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::FLOAT') %}
+    <div class="crudit-eip" data-field="valueFloat"
+         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
+        <form class="form-inline d-none">
+            <div class="control-group form-group d-flex justify-content-around align-items-center">
+                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
+                       value="{{ view.resource.valueFloat }}">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary crudit-eip-submit">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-default crudit-eip-cancel">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="editable-error-block help-block" style="display: none;">
+            </div>
+        </form>
+        <div class="crudit-eip-value">{{ view.resource.valueFloat }}</div>
+    </div>
+{% endif %}

@@ -21,7 +21,7 @@ class ConfigExtension extends AbstractExtension
         ];
     }
 
-    public function getConfigValue(string $type, string $group, string $name, mixed $default = null): bool|string|int|null
+    public function getConfigValue(string $type, string $group, string $name, mixed $default = null): bool|string|int|null|float
     {
         /** @var AbstractConfigRepository $configRepository */
         $configRepository = $this->em->getRepository(ConfigInterface::class);
@@ -35,6 +35,8 @@ class ConfigExtension extends AbstractExtension
                 return $configRepository->getText($group, $name, $default);
             case ConfigInterface::INT:
                 return $configRepository->getInt($group, $name, $default);
+            case ConfigInterface::FLOAT:
+                return $configRepository->getFloat($group, $name, $default);
             default:
                 return null;
         }

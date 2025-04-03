@@ -85,7 +85,8 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                     ->setValueBool($resource->getValueBool())
                     ->setValueString($resource->getValueString())
                     ->setValueText($resource->getValueText())
-                    ->setValueInt($resource->getValueInt());
+                    ->setValueInt($resource->getValueInt())
+                    ->setValueFloat($resource->getValueFloat());
 
                 $this->entityManager->refresh($resource);
 
@@ -104,6 +105,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                     ->setValueString($resource->getValueString())
                     ->setValueText($resource->getValueText())
                     ->setValueInt($resource->getValueInt())
+                    ->setValueFloat($resource->getValueFloat())
                     ->setTri($resource->getTri())
                     ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null);
 

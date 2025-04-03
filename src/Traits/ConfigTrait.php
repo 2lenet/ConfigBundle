@@ -32,6 +32,9 @@ trait ConfigTrait
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $valueInt = null;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $valueFloat = null;
+
     #[ORM\Column(type: 'integer')]
     private int $tri = 0;
 
@@ -133,6 +136,18 @@ trait ConfigTrait
     public function setValueInt(?int $valueInt): self
     {
         $this->valueInt = $valueInt;
+
+        return $this;
+    }
+
+    public function getValueFloat(): ?float
+    {
+        return $this->valueFloat;
+    }
+
+    public function setValueFloat(?float $valueFloat): self
+    {
+        $this->valueFloat = $valueFloat;
 
         return $this;
     }

@@ -34,7 +34,11 @@ class CacheManager
                 $value = $config->getValueText();
                 break;
             case ConfigInterface::STRING:
+            case ConfigInterface::PASSWORD:
                 $value = $config->getValueString();
+                break;
+            case ConfigInterface::FLOAT:
+                $value = $config->getValueFloat();
                 break;
             default:
                 $value = null;
@@ -46,7 +50,7 @@ class CacheManager
         }
     }
 
-    public function get(string $group, string $label, string $valueType, ?int $tenantId = null): int|string|bool|null
+    public function get(string $group, string $label, string $valueType, ?int $tenantId = null): int|string|bool|null|float
     {
         $cacheKey = $this->generateCacheKey(
             $group,

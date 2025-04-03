@@ -314,6 +314,64 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         return $item->getValueString();
     }
 
+    public function getFloat(string $group, string $label, float $default=0, ?int $tenantId = null): float
+    {
+        $cached = $this->cache->get($group, $label, ConfigInterface::FLOAT, $tenantId);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::FLOAT, $tenantId);
+            $item->setValueFloat($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        $this->cache->set($item);
+
+        return $item->getValueFloat();
+    }
+
+    public function setFloat(string $group, string $label, float $value, ?int $tenantId = null): void
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::FLOAT, $tenantId);
+            $this->_em->persist($item);
+        }
+        $item->setValueFloat($value);
+        $this->_em->flush();
+
+        $this->cache->set($item);
+    }
+
+    public function initFloat(string $group, string $label, float $default, ?int $tenantId = null): float
+    {
+        if (!$tenantId) {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label]);
+        } else {
+            $item = $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId]);
+        }
+        if (!$item) {
+            $item = $this->createConfig($group, $label, ConfigInterface::FLOAT, $tenantId);
+            $item->setValueFloat($default);
+            $this->_em->persist($item);
+            $this->_em->flush();
+        }
+
+        return $item->getValueFloat();
+    }
+
     private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
     {
         $configClass = $this->_em->getClassMetadata(ConfigInterface::class)->getName();

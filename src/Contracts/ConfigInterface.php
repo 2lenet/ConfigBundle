@@ -9,6 +9,7 @@ interface ConfigInterface
     public const TEXT = 'Text';
     public const INT = 'Int';
     public const PASSWORD = 'Password';
+    public const FLOAT = 'Float';
 
     public function __toString();
 
@@ -41,6 +42,10 @@ interface ConfigInterface
     public function getValueInt(): ?int;
 
     public function setValueInt(?int $valueInt): self;
+
+    public function getValueFloat(): ?float;
+
+    public function setValueFloat(?float $valueFloat): self;
 
     public function getTri(): ?int;
 
