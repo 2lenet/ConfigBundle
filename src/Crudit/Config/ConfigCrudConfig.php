@@ -22,12 +22,14 @@ class ConfigCrudConfig extends AbstractCrudConfig
     {
         $group = Field::new('group')->setRuptGroup(1);
         $label = Field::new('label');
+        $transLabel = Field::new('transLabel')->setTemplate('@LleConfig/_trans_label.html.twig');
         $value = Field::new('valueType')->setLabel('field.value');
         // you can return different fields based on the block key
         if ($key == CrudConfigInterface::INDEX || $key == CrudConfigInterface::SHOW) {
             return [
                 $group,
                 $label,
+                $transLabel,
                 $value->setTemplate("@LleConfig/_value.html.twig"),
             ];
         }
