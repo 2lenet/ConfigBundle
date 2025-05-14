@@ -1,1 +1,4 @@
-{{ resource.transLabel|trans }}
+{% set transLabel = resource.getTransLabel|trans %}
+{% if 'config.' not in transLabel  %}
+    {{ transLabel }}
+{% endif %}

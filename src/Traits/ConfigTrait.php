@@ -41,9 +41,6 @@ trait ConfigTrait
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $tenantId = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
-    private ?string $transLabel = null;
-
     public function __toString(): string
     {
         return $this->group . '/' . $this->label;
@@ -181,13 +178,6 @@ trait ConfigTrait
 
     public function getTransLabel(): ?string
     {
-        return $this->transLabel;
-    }
-
-    public function setTransLabel(string $transLabel): self
-    {
-        $this->transLabel = $transLabel;
-
-        return $this;
+        return 'config.' . $this->label;
     }
 }
