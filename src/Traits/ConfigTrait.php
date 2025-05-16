@@ -178,6 +178,6 @@ trait ConfigTrait
 
     public function getTransLabel(): ?string
     {
-        return 'config.' . $this->label;
+        return 'config.' . $this->group . $this->label;
     }
 }
