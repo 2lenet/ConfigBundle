@@ -66,8 +66,8 @@
          data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
         <form class="form-inline d-none">
             <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueText }}">
+                <textarea type="text" class="form-control form-control-sm crudit-eip-input multiline"
+                          autocomplete="off" rows="8">{{ view.resource.valueText }}</textarea>
                 <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-primary crudit-eip-submit">
                         <i class="fa fa-check"></i>
@@ -80,7 +80,7 @@
             <div class="editable-error-block help-block" style="display: none;">
             </div>
         </form>
-        <div class="crudit-eip-value">{{ view.resource.valueText }}</div>
+        <div class="crudit-eip-value multiline">{{ view.resource.valueText }}</div>
     </div>
 {% endif %}
 {% if view.resource.valueType == "Int" %}
