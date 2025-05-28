@@ -110,8 +110,8 @@
          data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
         <form class="form-inline d-none">
             <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueFloat }}">
+                <input type="number" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
+                       value="{{ view.resource.valueFloat }}" required>
                 <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-primary crudit-eip-submit">
                         <i class="fa fa-check"></i>

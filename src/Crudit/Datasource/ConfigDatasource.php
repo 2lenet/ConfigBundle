@@ -66,7 +66,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         if (in_array($resource->getValueType(), [ConfigInterface::TEXT]) && !$resource->getValueText()) {
             $resource->setValueText('');
         }
-        if (in_array($resource->getValueType(), [ConfigInterface::INT]) && !$resource->getValueInt()) {
+        if (in_array($resource->getValueType(), [ConfigInterface::INT, ConfigInterface::FLOAT]) && !$resource->getValueInt()) {
             return;
         }
 
