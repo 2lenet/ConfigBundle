@@ -63,6 +63,15 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && !$resource->getValueString()) {
             $resource->setValueString('');
         }
+        if (in_array($resource->getValueType(), [ConfigInterface::TEXT]) && !$resource->getValueText()) {
+            $resource->setValueText('');
+        }
+        if (in_array($resource->getValueType(), [ConfigInterface::INT]) && !$resource->getValueInt()) {
+            return;
+        }
+        if (in_array($resource->getValueType(), [ConfigInterface::FLOAT]) && !$resource->getValueFloat()) {
+            return;
+        }
 
         /** @var bool $usingTenant */
         $usingTenant = $this->parameterBag->get('lle_config.using_tenant');
