@@ -67,6 +67,7 @@ namespace App\Repository;
 use App\Entity\Config;
 use Doctrine\Persistence\ManagerRegistry;
 use Lle\ConfigBundle\Repository\AbstractConfigRepository;
+use Lle\ConfigBundle\Service\CacheManager;
 
 /**
  * @method Config|null find($id, $lockMode = null, $lockVersion = null)
@@ -76,9 +77,9 @@ use Lle\ConfigBundle\Repository\AbstractConfigRepository;
  */
 class ConfigRepository extends AbstractConfigRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, CacheManager $cacheManager)
     {
-        parent::__construct($registry, Config::class);
+        parent::__construct($cacheManager, $registry, Config::class);
     }
 ...
 }
