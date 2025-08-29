@@ -32,7 +32,7 @@
     },
     "require": {
         "symfony/orm-pack": "*",
-        "2lenet/crudit-bundle": "*",
+        "2lenet/crudit-bundle": "^1.12",
         "symfony/framework-bundle": "^6.0|^7.0",
         "twig/twig": "^3.4"
     },

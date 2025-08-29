@@ -57,7 +57,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
     /**
      * @param ConfigInterface $resource
      */
-    public function save(object $resource): void
+    public function save(object $resource): bool
     {
         // input type password or string set null on empty field
         if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && !$resource->getValueString()) {
@@ -67,10 +67,10 @@ class ConfigDatasource extends AbstractDoctrineDatasource
             $resource->setValueText('');
         }
         if (in_array($resource->getValueType(), [ConfigInterface::INT]) && !$resource->getValueInt()) {
-            return;
+            return true;
         }
         if (in_array($resource->getValueType(), [ConfigInterface::FLOAT]) && !$resource->getValueFloat()) {
-            return;
+            return true;
         }
 
         /** @var bool $usingTenant */
@@ -126,5 +126,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                 $this->cache->set($config);
             }
         }
+
+        return true;
     }
 }
