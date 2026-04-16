@@ -28,7 +28,8 @@
         "phpunit/phpunit": "^10.0",
         "ergebnis/phpstan-rules": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^1.1",
-        "phpstan/phpstan-strict-rules": "^1.5"
+        "phpstan/phpstan-strict-rules": "^1.5",
+        "symfony/var-exporter": "^6.4|^7.0|^8.0"
     },
     "require": {
         "php": ">=8.1",
