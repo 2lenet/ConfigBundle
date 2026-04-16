@@ -31,10 +31,11 @@
         "phpstan/phpstan-strict-rules": "^1.5"
     },
     "require": {
+        "php": ">=8.1",
         "symfony/orm-pack": "*",
         "2lenet/crudit-bundle": "^1.12",
-        "symfony/framework-bundle": "^6.0|^7.0",
-        "twig/twig": "^3.4"
+        "symfony/framework-bundle": "^6.0|^7.0|^8.0",
+        "twig/twig": "^3.4|^4.0"
     },
     "config": {
         "allow-plugins": {
