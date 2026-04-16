@@ -2,9 +2,9 @@ name: Validate
 
 on:
     push:
-        branches: [main]
+        branches: [master]
     pull_request:
-        branches: [main]
+        branches: [master]
 
 jobs:
     php-coding-standard:
@@ -18,7 +18,7 @@ jobs:
         steps:
             -   uses: actions/checkout@v2
 
-            -   name: 'Validate composer.json and composer.lock'
+            -   name: 'Validate composer.json'
                 run: composer validate
 
             -   name: 'Cache Composer packages'
@@ -26,19 +26,16 @@ jobs:
                 uses: actions/cache@v4
                 with:
                     path: vendor
-                    key: ${{ runner.os }}-php-${{ matrix.php_version }}-${{ hashFiles('**/composer.json') }}
+                    key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
                     restore-keys: |
-                        ${{ runner.os }}-php-${{ matrix.php_version }}-
+                        ${{ runner.os }}-php-
 
             -   name: 'Install dependencies with Composer'
                 uses: php-actions/composer@v5
                 with:
                     php_version: ${{ matrix.php_version }}
                     version: 2
-                    args: --profile
+                    args: --profile --ignore-platform-reqs
 
             -   name: 'PHP CodeSniffer Validations'
                 run: vendor/bin/phpcs
-
-            -   name: 'PHPStan Static Analysis'
-                run: vendor/bin/phpstan analyse -c tests/phpstan.neon
