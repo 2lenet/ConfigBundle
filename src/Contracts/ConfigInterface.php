@@ -53,5 +53,5 @@ interface ConfigInterface
 
     public function getTenantId(): ?int;
 
-    public function setTenantId(int $tenantId): self;
+    public function setTenantId(?int $tenantId): self;
 }

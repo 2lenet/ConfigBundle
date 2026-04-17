@@ -28,7 +28,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::BOOL, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (bool) $cached;
         }
 
         if (!$tenantId) {
@@ -45,7 +45,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueBool();
+        return $item->getValueBool() ?? $default;
     }
 
     public function setBool(string $group, string $label, bool $value, ?int $tenantId = null): void
@@ -79,14 +79,14 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueBool();
+        return $item->getValueBool() ?? $default;
     }
 
     public function getString(string $group, string $label, string $default, ?int $tenantId = null): string
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::STRING, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (string) $cached;
         }
 
         if (!$tenantId) {
@@ -103,7 +103,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueString();
+        return $item->getValueString() ?? $default;
     }
 
     public function setString(string $group, string $label, string $value, ?int $tenantId = null): void
@@ -137,14 +137,14 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueString();
+        return $item->getValueString() ?? $default;
     }
 
     public function getText(string $group, string $label, string $default, ?int $tenantId = null): string
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::TEXT, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (string) $cached;
         }
 
         if (!$tenantId) {
@@ -161,7 +161,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueText();
+        return $item->getValueText() ?? $default;
     }
 
     public function setText(string $group, string $label, string $value, ?int $tenantId = null): void
@@ -195,14 +195,14 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueText();
+        return $item->getValueText() ?? $default;
     }
 
     public function getInt(string $group, string $label, int $default, ?int $tenantId = null): int
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::INT, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (int) $cached;
         }
 
         if (!$tenantId) {
@@ -219,7 +219,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueInt();
+        return $item->getValueInt() ?? $default;
     }
 
     public function setInt(string $group, string $label, int $value, ?int $tenantId = null): void
@@ -253,14 +253,14 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueInt();
+        return $item->getValueInt() ?? $default;
     }
 
     public function getPassword(string $group, string $label, string $default, ?int $tenantId = null): string
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::STRING, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (string) $cached;
         }
 
         if (!$tenantId) {
@@ -277,7 +277,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueString();
+        return $item->getValueString() ?? $default;
     }
 
     public function setPassword(string $group, string $label, string $value, ?int $tenantId = null): void
@@ -311,14 +311,14 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueString();
+        return $item->getValueString() ?? $default;
     }
 
     public function getFloat(string $group, string $label, float $default=0, ?int $tenantId = null): float
     {
         $cached = $this->cache->get($group, $label, ConfigInterface::FLOAT, $tenantId);
         if ($cached !== null) {
-            return $cached;
+            return (float) $cached;
         }
 
         if (!$tenantId) {
@@ -335,7 +335,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
         $this->cache->set($item);
 
-        return $item->getValueFloat();
+        return $item->getValueFloat() ?? $default;
     }
 
     public function setFloat(string $group, string $label, float $value, ?int $tenantId = null): void
@@ -369,7 +369,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
 
-        return $item->getValueFloat();
+        return $item->getValueFloat() ?? $default;
     }
 
     private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
