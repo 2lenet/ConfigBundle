@@ -89,7 +89,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
 
             if ($configWithTenant) {
                 $configWithTenant
-                    ->setValueType($resource->getValueType() ?? '')
+                    ->setValueType($resource->getValueType())
                     ->setValueBool($resource->getValueBool())
                     ->setValueString($resource->getValueString())
                     ->setValueText($resource->getValueText())
@@ -106,15 +106,15 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                 /** @var ConfigInterface $config */
                 $config = $this->newInstance();
                 $config
-                    ->setLabel($resource->getLabel() ?? '')
-                    ->setGroup($resource->getGroup() ?? '')
-                    ->setValueType($resource->getValueType() ?? '')
+                    ->setLabel($resource->getLabel())
+                    ->setGroup($resource->getGroup())
+                    ->setValueType($resource->getValueType())
                     ->setValueBool($resource->getValueBool())
                     ->setValueString($resource->getValueString())
                     ->setValueText($resource->getValueText())
                     ->setValueInt($resource->getValueInt())
                     ->setValueFloat($resource->getValueFloat())
-                    ->setTri($resource->getTri() ?? 0)
+                    ->setTri($resource->getTri())
                     ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null);
 
                 $this->entityManager->refresh($resource);
