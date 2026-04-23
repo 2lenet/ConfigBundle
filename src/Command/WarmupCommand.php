@@ -22,7 +22,7 @@ class WarmupCommand extends Command
         /** @var iterable<WarmupInterface> */
         private iterable $warmups,
     ) {
-        parent::__construct(null);
+        parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

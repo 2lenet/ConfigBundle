@@ -7,14 +7,14 @@ includes:
     - ../vendor/phpstan/phpstan-deprecation-rules/rules.neon
 
 parameters:
-    level: 6
+    level: 8
     paths:
         - ../src
         - ../tests
-    excludePaths:
-        - '../src/Resources/skeleton'
     ignoreErrors:
         -
             identifier: missingType.iterableValue
         -
             identifier: missingType.generics
+        -
+            identifier: trait.unused

@@ -81,14 +81,13 @@ class ConfigDatasource extends AbstractDoctrineDatasource
             /** @var ConfigInterface $resource */
             $this->cache->set($resource);
         } else {
-            $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)->findBy([
+            $configWithTenant = $this->entityManager->getRepository(ConfigInterface::class)->findOneBy([
                 'label' => $resource->getLabel(),
                 'group' => $resource->getGroup(),
                 'tenantId' => $this->tenantService ? $this->tenantService->getTenantId() : null
             ]);
 
             if ($configWithTenant) {
-                /** @var ConfigInterface $configWithTenant */
                 $configWithTenant
                     ->setValueType($resource->getValueType())
                     ->setValueBool($resource->getValueBool())
