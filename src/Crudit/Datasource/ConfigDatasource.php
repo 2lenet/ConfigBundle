@@ -89,12 +89,12 @@ class ConfigDatasource extends AbstractDoctrineDatasource
 
             if ($configWithTenant) {
                 $configWithTenant
-                    ->setValueType($resource->getValueType())
-                    ->setValueBool($resource->getValueBool())
-                    ->setValueString($resource->getValueString())
-                    ->setValueText($resource->getValueText())
-                    ->setValueInt($resource->getValueInt())
-                    ->setValueFloat($resource->getValueFloat());
+                    ->setValueType((string) $resource->getValueType())
+                    ->setValueBool((bool) $resource->getValueBool())
+                    ->setValueString((string) $resource->getValueString())
+                    ->setValueText((string) $resource->getValueText())
+                    ->setValueInt((int) $resource->getValueInt())
+                    ->setValueFloat((float) $resource->getValueFloat());
 
                 $this->entityManager->refresh($resource);
 
@@ -106,16 +106,16 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                 /** @var ConfigInterface $config */
                 $config = $this->newInstance();
                 $config
-                    ->setLabel($resource->getLabel())
-                    ->setGroup($resource->getGroup())
-                    ->setValueType($resource->getValueType())
-                    ->setValueBool($resource->getValueBool())
-                    ->setValueString($resource->getValueString())
-                    ->setValueText($resource->getValueText())
-                    ->setValueInt($resource->getValueInt())
-                    ->setValueFloat($resource->getValueFloat())
-                    ->setTri($resource->getTri())
-                    ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null);
+                    ->setLabel((string) $resource->getLabel())
+                    ->setGroup((string) $resource->getGroup())
+                    ->setValueType((string) $resource->getValueType())
+                    ->setValueBool((bool) $resource->getValueBool())
+                    ->setValueString((string) $resource->getValueString())
+                    ->setValueText((string) $resource->getValueText())
+                    ->setValueInt((int) $resource->getValueInt())
+                    ->setValueFloat((float) $resource->getValueFloat())
+                    ->setTri((int) $resource->getTri())
+                    ->setTenantId((int) ($this->tenantService ? $this->tenantService->getTenantId() : null));
 
                 $this->entityManager->refresh($resource);
 

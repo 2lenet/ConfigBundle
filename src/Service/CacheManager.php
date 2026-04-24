@@ -15,10 +15,10 @@ class CacheManager
     public function set(ConfigInterface $config): void
     {
         $cacheKey = $this->generateCacheKey(
-            $config->getGroup(),
-            $config->getLabel(),
-            $config->getValueType(),
-            $config->getTenantId(),
+            (string) $config->getGroup(),
+            (string) $config->getLabel(),
+            (string) $config->getValueType(),
+            (int) $config->getTenantId(),
         );
 
         $item = $this->cache->getItem($cacheKey);
