@@ -56,7 +56,7 @@ class CacheManager
             $group,
             $label,
             $valueType,
-            $tenantId
+            (int) $tenantId
         );
 
         $item = $this->cache->getItem($cacheKey);
