@@ -36,7 +36,7 @@ trait ConfigTrait
     private ?float $valueFloat = null;
 
     #[ORM\Column(type: 'integer')]
-    private int $tri = 0;
+    private ?int $tri = 0;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $tenantId = null;
@@ -61,7 +61,7 @@ trait ConfigTrait
         return $this->label;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
 
@@ -73,7 +73,7 @@ trait ConfigTrait
         return $this->group;
     }
 
-    public function setGroup(string $group): self
+    public function setGroup(?string $group): self
     {
         $this->group = $group;
 
@@ -85,7 +85,7 @@ trait ConfigTrait
         return $this->valueType;
     }
 
-    public function setValueType(string $valueType): self
+    public function setValueType(?string $valueType): self
     {
         $this->valueType = $valueType;
 
@@ -157,7 +157,7 @@ trait ConfigTrait
         return $this->tri;
     }
 
-    public function setTri(int $tri): self
+    public function setTri(?int $tri): self
     {
         $this->tri = $tri;
 

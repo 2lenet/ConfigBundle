@@ -15,17 +15,17 @@ interface ConfigInterface
 
     public function getId(): ?int;
 
-    public function getLabel(): string;
+    public function getLabel(): ?string;
 
-    public function setLabel(string $label): self;
+    public function setLabel(?string $label): self;
 
-    public function getGroup(): string;
+    public function getGroup(): ?string;
 
-    public function setGroup(string $group): self;
+    public function setGroup(?string $group): self;
 
-    public function getValueType(): string;
+    public function getValueType(): ?string;
 
-    public function setValueType(string $valueType): self;
+    public function setValueType(?string $valueType): self;
 
     public function getValueBool(): ?bool;
 
@@ -47,9 +47,9 @@ interface ConfigInterface
 
     public function setValueFloat(?float $valueFloat): self;
 
-    public function getTri(): int;
+    public function getTri(): ?int;
 
-    public function setTri(int $tri): self;
+    public function setTri(?int $tri): self;
 
     public function getTenantId(): ?int;
 
