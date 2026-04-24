@@ -67,7 +67,7 @@ class CacheManager
         return null;
     }
 
-    public function generateCacheKey(?string $group, ?string $label, ?string $valueType, ?int $tenantId = null): string
+    public function generateCacheKey(string $group, string $label, string $valueType, int $tenantId): string
     {
         if ($tenantId) {
             $cacheKey = sprintf(

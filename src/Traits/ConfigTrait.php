@@ -51,7 +51,7 @@ trait ConfigTrait
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -61,7 +61,7 @@ trait ConfigTrait
         return $this->label;
     }
 
-    public function setLabel(?string $label): self
+    public function setLabel(string $label): self
     {
         $this->label = $label;
 
@@ -73,7 +73,7 @@ trait ConfigTrait
         return $this->group;
     }
 
-    public function setGroup(?string $group): self
+    public function setGroup(string $group): self
     {
         $this->group = $group;
 
@@ -85,7 +85,7 @@ trait ConfigTrait
         return $this->valueType;
     }
 
-    public function setValueType(?string $valueType): self
+    public function setValueType(string $valueType): self
     {
         $this->valueType = $valueType;
 
@@ -97,7 +97,7 @@ trait ConfigTrait
         return $this->valueBool;
     }
 
-    public function setValueBool(?bool $valueBool): self
+    public function setValueBool(bool $valueBool): self
     {
         $this->valueBool = $valueBool;
 
@@ -109,7 +109,7 @@ trait ConfigTrait
         return $this->valueString;
     }
 
-    public function setValueString(?string $valueString): self
+    public function setValueString(string $valueString): self
     {
         $this->valueString = $valueString;
 
@@ -121,7 +121,7 @@ trait ConfigTrait
         return $this->valueText;
     }
 
-    public function setValueText(?string $valueText): self
+    public function setValueText(string $valueText): self
     {
         $this->valueText = $valueText;
 
@@ -133,7 +133,7 @@ trait ConfigTrait
         return $this->valueInt;
     }
 
-    public function setValueInt(?int $valueInt): self
+    public function setValueInt(int $valueInt): self
     {
         $this->valueInt = $valueInt;
 
@@ -157,7 +157,7 @@ trait ConfigTrait
         return $this->tri;
     }
 
-    public function setTri(?int $tri): self
+    public function setTri(int $tri): self
     {
         $this->tri = $tri;
 
@@ -169,7 +169,7 @@ trait ConfigTrait
         return $this->tenantId;
     }
 
-    public function setTenantId(?int $tenantId): self
+    public function setTenantId(int $tenantId): self
     {
         $this->tenantId = $tenantId;
 
