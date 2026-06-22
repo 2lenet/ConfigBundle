@@ -382,7 +382,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
             ->setGroup($group)
             ->setLabel($label)
             ->setValueType($valueType)
-            ->setTenantId((int) $tenantId);
+            ->setTenantId($tenantId);
 
         return $item;
     }
