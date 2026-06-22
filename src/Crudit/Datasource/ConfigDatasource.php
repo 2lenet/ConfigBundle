@@ -115,7 +115,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
                     ->setValueInt($resource->getValueInt())
                     ->setValueFloat($resource->getValueFloat())
                     ->setTri($resource->getTri())
-                    ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null));
+                    ->setTenantId($this->tenantService ? $this->tenantService->getTenantId() : null);
 
                 $this->entityManager->refresh($resource);
 
