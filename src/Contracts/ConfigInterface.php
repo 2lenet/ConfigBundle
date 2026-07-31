@@ -25,7 +25,7 @@ interface ConfigInterface
 
     public function getValueType(): ?string;
 
-    public function setValueType(string $valueType): self;
+    public function setValueType(?string $valueType): self;
 
     public function getValueBool(): ?bool;
 
