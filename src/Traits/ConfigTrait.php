@@ -152,7 +152,7 @@ trait ConfigTrait
         return $this;
     }
 
-    public function getTri(): ?int
+    public function getTri(): int
     {
         return $this->tri;
     }
