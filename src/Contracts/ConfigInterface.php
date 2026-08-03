@@ -47,7 +47,7 @@ interface ConfigInterface
 
     public function setValueFloat(?float $valueFloat): self;
 
-    public function getTri(): ?int;
+    public function getTri(): int;
 
     public function setTri(int $tri): self;
 
