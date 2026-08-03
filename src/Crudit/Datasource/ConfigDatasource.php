@@ -89,7 +89,7 @@ class ConfigDatasource extends AbstractDoctrineDatasource
 
             if ($configWithTenant) {
                 $configWithTenant
-                    ->setValueType($resource->getValueType())
+                    ->setValueType((string) $resource->getValueType())
                     ->setValueBool($resource->getValueBool())
                     ->setValueString($resource->getValueString())
                     ->setValueText($resource->getValueText())
