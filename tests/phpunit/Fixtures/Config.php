@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Lle\ConfigBundle\Tests\Fixtures;
 
+use Doctrine\ORM\Mapping as ORM;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Traits\ConfigTrait;
 
+#[ORM\Entity(repositoryClass: ConfigRepository::class)]
+#[ORM\Table(name: 'config')]
 class Config implements ConfigInterface
 {
     use ConfigTrait;
