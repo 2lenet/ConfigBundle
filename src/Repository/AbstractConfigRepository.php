@@ -202,7 +202,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
 
     public function getPassword(string $group, string $label, string $default, ?int $tenantId = null): string
     {
-        $cached = $this->cache->get($group, $label, ConfigInterface::STRING, $tenantId);
+        $cached = $this->cache->get($group, $label, ConfigInterface::PASSWORD, $tenantId);
         if ($cached !== null) {
             return (string) $cached;
         }
