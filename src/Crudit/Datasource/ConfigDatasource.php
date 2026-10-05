@@ -59,17 +59,20 @@ class ConfigDatasource extends AbstractDoctrineDatasource
      */
     public function save(object $resource): bool
     {
-        // input type password or string set null on empty field
-        if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && !$resource->getValueString()) {
+        // an empty text field arrives as null: store an empty string ("0" is a value, not an empty field)
+        if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && $resource->getValueString() === null) {
             $resource->setValueString('');
         }
-        if (in_array($resource->getValueType(), [ConfigInterface::TEXT]) && !$resource->getValueText()) {
+        if (in_array($resource->getValueType(), [ConfigInterface::TEXT]) && $resource->getValueText() === null) {
             $resource->setValueText('');
         }
-        if (in_array($resource->getValueType(), [ConfigInterface::INT]) && !$resource->getValueInt()) {
-            return true;
-        }
-        if (in_array($resource->getValueType(), [ConfigInterface::FLOAT]) && !$resource->getValueFloat()) {
+        // an empty number is ignored (0 is a value): reload the entity so that a later flush() cannot write it
+        if (
+            ($resource->getValueType() === ConfigInterface::INT && $resource->getValueInt() === null)
+            || ($resource->getValueType() === ConfigInterface::FLOAT && $resource->getValueFloat() === null)
+        ) {
+            $this->entityManager->refresh($resource);
+
             return true;
         }
 
