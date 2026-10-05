@@ -5,6 +5,7 @@ services:
 
     Lle\ConfigBundle\:
         resource: '../../'
+        exclude: '../../Dto/'
 
     Lle\ConfigBundle\Twig\ConfigExtension:
         arguments:

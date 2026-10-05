@@ -17,6 +17,11 @@
             "Lle\\ConfigBundle\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Lle\\ConfigBundle\\Tests\\": "tests/phpunit/"
+        }
+    },
     "require": {
         "php": "^8.4",
         "2lenet/crudit-bundle": "^1.12",

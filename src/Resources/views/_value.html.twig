@@ -51,14 +51,8 @@
             <div class="editable-error-block help-block" style="display: none;">
             </div>
         </form>
-        {% set length = view.resource.valueString|length %}
-        <div class="crudit-eip-value">
-            {% if length > 0 %}
-                {% for char in 0..length %}
-                    *
-                {% endfor %}
-            {% endif %}
-        </div>
+        {# fixed-length mask: the real length is not revealed #}
+        <div class="crudit-eip-value">{% if view.resource.valueString is not empty %}••••••••{% endif %}</div>
     </div>
 {% endif %}
 {% if view.resource.valueType == "Text" %}

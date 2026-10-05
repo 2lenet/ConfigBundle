@@ -1,0 +1,6 @@
+navigation:
+    label: "Konfigurationsgruppen"
+
+scope:
+    global: "Global"
+    tenant: "Betrieb"
