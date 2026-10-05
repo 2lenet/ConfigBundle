@@ -17,10 +17,10 @@ use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 class WarmupCommand extends Command
 {
     public function __construct(
-        private EntityManagerInterface $em,
+        protected EntityManagerInterface $em,
         #[AutowireIterator('lle.config.warmup')]
         /** @var iterable<WarmupInterface> */
-        private iterable $warmups,
+        protected iterable $warmups,
     ) {
         parent::__construct();
     }

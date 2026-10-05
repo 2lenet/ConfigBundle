@@ -230,3 +230,10 @@ class ConfigWarmup implements WarmupInterface
 ```
 
 Do not use set*(), because it will overwrite defined configurations.
+
+### Reading and writing
+
+- Without a `$tenantId`, the methods read and write the global value only (`tenantId IS NULL`), never the value of a tenant.
+- `get*()` and `init*()` create a missing key with its default by a plain `INSERT` on the config table: they never flush
+  the EntityManager, so the pending changes of the calling code are left untouched.
+- `set*()` is a write: it flushes the EntityManager, as before.

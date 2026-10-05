@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Lle\ConfigBundle\Twig;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,7 +12,7 @@ use Twig\TwigFunction;
 
 class ConfigExtension extends AbstractExtension
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(protected EntityManagerInterface $em)
     {
     }
 
@@ -21,24 +23,22 @@ class ConfigExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * The default is converted to the requested type: a missing default is the empty value of that type.
+     */
     public function getConfigValue(string $type, string $group, string $name, mixed $default = null): bool|string|int|null|float
     {
         /** @var AbstractConfigRepository $configRepository */
         $configRepository = $this->em->getRepository(ConfigInterface::class);
 
-        switch ($type) {
-            case ConfigInterface::BOOL:
-                return $configRepository->getBool($group, $name, $default);
-            case ConfigInterface::STRING:
-                return $configRepository->getString($group, $name, $default);
-            case ConfigInterface::TEXT:
-                return $configRepository->getText($group, $name, $default);
-            case ConfigInterface::INT:
-                return $configRepository->getInt($group, $name, $default);
-            case ConfigInterface::FLOAT:
-                return $configRepository->getFloat($group, $name, $default);
-            default:
-                return null;
-        }
+        return match ($type) {
+            ConfigInterface::BOOL => $configRepository->getBool($group, $name, (bool) $default),
+            ConfigInterface::STRING => $configRepository->getString($group, $name, (string) $default),
+            ConfigInterface::TEXT => $configRepository->getText($group, $name, (string) $default),
+            ConfigInterface::INT => $configRepository->getInt($group, $name, (int) $default),
+            ConfigInterface::FLOAT => $configRepository->getFloat($group, $name, (float) $default),
+            ConfigInterface::PASSWORD => $configRepository->getPassword($group, $name, (string) $default),
+            default => null,
+        };
     }
 }

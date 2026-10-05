@@ -1,0 +1,6 @@
+navigation:
+    label: "Configuration groups"
+
+scope:
+    global: "Global"
+    tenant: "Tenant"
