@@ -8,6 +8,7 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\UnderscoreNamingStrategy;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\ResolveTargetEntityListener;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -34,7 +35,12 @@ abstract class DoctrineTestCase extends TestCase
     protected function setUp(): void
     {
         $configuration = ORMSetup::createAttributeMetadataConfiguration([self::FIXTURES_DIRECTORY], true);
-        $configuration->enableNativeLazyObjects(true);
+        // ORM 3 on PHP 8.4; ORM 2 (used by some projects) has no such method and generates its proxies itself
+        if (method_exists($configuration, 'enableNativeLazyObjects')) { // @phpstan-ignore function.alreadyNarrowedType
+            $configuration->enableNativeLazyObjects(true);
+        }
+        // same column names as a Symfony project (value_string, tenant_id…)
+        $configuration->setNamingStrategy(new UnderscoreNamingStrategy(CASE_LOWER));
 
         $resolveTargetEntity = new ResolveTargetEntityListener();
         $resolveTargetEntity->addResolveTargetEntity(ConfigInterface::class, Config::class, []);

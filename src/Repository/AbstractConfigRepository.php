@@ -35,8 +35,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::BOOL, $tenantId);
             $item->setValueBool($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -63,8 +62,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::BOOL, $tenantId);
             $item->setValueBool($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueBool() ?? $default;
@@ -81,8 +79,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::STRING, $tenantId);
             $item->setValueString($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -109,8 +106,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::STRING, $tenantId);
             $item->setValueString($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueString() ?? $default;
@@ -127,8 +123,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::TEXT, $tenantId);
             $item->setValueText($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -155,8 +150,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::TEXT, $tenantId);
             $item->setValueText($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueText() ?? $default;
@@ -173,8 +167,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::INT, $tenantId);
             $item->setValueInt($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -201,8 +194,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::INT, $tenantId);
             $item->setValueInt($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueInt() ?? $default;
@@ -219,8 +211,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
             $item->setValueString($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -247,8 +238,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::PASSWORD, $tenantId);
             $item->setValueString($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueString() ?? $default;
@@ -265,8 +255,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::FLOAT, $tenantId);
             $item->setValueFloat($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         $this->cache->set($item);
@@ -293,8 +282,7 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
         if (!$item) {
             $item = $this->createConfig($group, $label, ConfigInterface::FLOAT, $tenantId);
             $item->setValueFloat($default);
-            $this->getEntityManager()->persist($item);
-            $this->getEntityManager()->flush();
+            $item = $this->insertConfig($item);
         }
 
         return $item->getValueFloat() ?? $default;
@@ -306,6 +294,38 @@ abstract class AbstractConfigRepository extends ServiceEntityRepository
     protected function findConfig(string $group, string $label, ?int $tenantId): ?ConfigInterface
     {
         return $this->findOneBy(['group' => $group, 'label' => $label, 'tenantId' => $tenantId ?: null]);
+    }
+
+    /**
+     * Stores a missing key with a plain INSERT on its table: a read never flushes the EntityManager,
+     * so the pending changes of the caller are neither saved nor lost.
+     */
+    protected function insertConfig(ConfigInterface $config): ConfigInterface
+    {
+        $entityManager = $this->getEntityManager();
+        $connection = $entityManager->getConnection();
+        $platform = $connection->getDatabasePlatform();
+        $quoteStrategy = $entityManager->getConfiguration()->getQuoteStrategy();
+        $metadata = $entityManager->getClassMetadata($config::class);
+
+        $data = [];
+        $types = [];
+        foreach ($metadata->getFieldNames() as $fieldName) {
+            if ($metadata->isIdentifier($fieldName)) {
+                continue;
+            }
+
+            $column = $quoteStrategy->getColumnName($fieldName, $metadata, $platform);
+            $data[$column] = $metadata->getFieldValue($config, $fieldName);
+            $type = $metadata->getTypeOfField($fieldName);
+            if ($type !== null) {
+                $types[$column] = $type;
+            }
+        }
+
+        $connection->insert($quoteStrategy->getTableName($metadata, $platform), $data, $types);
+
+        return $this->findConfig((string) $config->getGroup(), (string) $config->getLabel(), $config->getTenantId()) ?? $config;
     }
 
     private function createConfig(string $group, string $label, string $valueType, ?int $tenantId = null): ConfigInterface
