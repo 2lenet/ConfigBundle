@@ -12,7 +12,7 @@ use Twig\TwigFunction;
 
 class ConfigExtension extends AbstractExtension
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(protected EntityManagerInterface $em)
     {
     }
 
