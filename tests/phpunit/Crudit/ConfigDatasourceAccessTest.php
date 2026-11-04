@@ -9,6 +9,7 @@ use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
 use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\ConfigBundle\Tests\Fixtures\Config;
 use Lle\ConfigBundle\Tests\Support\DoctrineTestCase;
+use Lle\CruditBundle\Datasource\DatasourceParams;
 use Lle\CruditBundle\Filter\FilterState;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -27,6 +28,8 @@ class ConfigDatasourceAccessTest extends DoctrineTestCase
 
     private const ORIGINAL_VALUE = 'original';
     private const NEW_VALUE = 'changed';
+    private const NEW_SORT_ORDER = 99;
+    private const TENANT_ID = 7;
 
     private const ROLE_SHOW_PAYMENT = 'ROLE_CONFIG_ACTION_SHOW_GROUP_SAFERPAY';
     private const ROLE_EDIT_PAYMENT = 'ROLE_CONFIG_ACTION_EDIT_GROUP_SAFERPAY';
@@ -48,13 +51,6 @@ class ConfigDatasourceAccessTest extends DoctrineTestCase
                 ->setValueString(self::ORIGINAL_VALUE),
         );
         $this->sender = $this->saveConfig(Config::create(self::GROUP_MAIL, self::LABEL_SENDER)->setValueString(self::ORIGINAL_VALUE));
-    }
-
-    public function testListContainsEveryGroupWithoutAccessChecker(): void
-    {
-        $datasource = $this->createDatasource(null);
-
-        self::assertSame([self::LABEL_LOGIN, self::LABEL_PASSWORD, self::LABEL_SENDER], $this->listLabels($datasource));
     }
 
     public function testListContainsEveryGroupWhenGroupRolesAreDisabled(): void
@@ -142,6 +138,60 @@ class ConfigDatasourceAccessTest extends DoctrineTestCase
         self::assertSame(self::GROUP_MAIL, $this->sender->getGroup());
     }
 
+    public function testTheSortOrderCannotBeChanged(): void
+    {
+        $datasource = $this->createDatasource($this->createAccessChecker(true, [self::ROLE_EDIT_PAYMENT]));
+        $login = $this->login->setTri(self::NEW_SORT_ORDER);
+
+        $caught = $this->saveAndCatch($datasource, $login);
+
+        self::assertInstanceOf(AccessDeniedException::class, $caught);
+        self::assertSame(0, $this->login->getTri());
+    }
+
+    /**
+     * Only the value field of the stored type may change: no valueBool written on a String configuration.
+     */
+    public function testAnotherValueFieldCannotBeWritten(): void
+    {
+        $datasource = $this->createDatasource($this->createAccessChecker(true, [self::ROLE_EDIT_PAYMENT]));
+        $login = $this->login->setValueBool(true);
+
+        $caught = $this->saveAndCatch($datasource, $login);
+
+        self::assertInstanceOf(AccessDeniedException::class, $caught);
+        self::assertNull($this->login->getValueBool());
+    }
+
+    public function testCountOnlyCountsVisibleGroups(): void
+    {
+        $datasource = $this->createDatasource($this->createAccessChecker(true, [self::ROLE_SHOW_PAYMENT]));
+
+        self::assertSame(2, $datasource->count(null));
+    }
+
+    /**
+     * The pager compares the count with the page size: the count ignores the pagination of the request.
+     */
+    public function testCountIgnoresThePagination(): void
+    {
+        $datasource = $this->createDatasource($this->createAccessChecker(true, [self::ROLE_SHOW_PAYMENT]));
+
+        self::assertSame(2, $datasource->count(new DatasourceParams(1, 1)));
+    }
+
+    /**
+     * A tenant line replaces the global line of the same configuration in the list: counted once.
+     */
+    public function testCountMatchesTheListWithATenantLine(): void
+    {
+        $this->saveConfig(Config::create(self::GROUP_MAIL, self::LABEL_SENDER, self::TENANT_ID)->setValueString(self::ORIGINAL_VALUE));
+        $datasource = $this->createDatasource($this->createAccessChecker(false, []));
+
+        self::assertCount(3, [...$datasource->list(null)]);
+        self::assertSame(3, $datasource->count(null));
+    }
+
     private function saveAndCatch(ConfigDatasource $datasource, Config $config): ?AccessDeniedException
     {
         $caught = null;
@@ -178,14 +228,13 @@ class ConfigDatasourceAccessTest extends DoctrineTestCase
         return new ConfigAccessChecker($authorizationChecker, $groupRoles);
     }
 
-    private function createDatasource(?ConfigAccessChecker $accessChecker): ConfigDatasource
+    private function createDatasource(ConfigAccessChecker $accessChecker): ConfigDatasource
     {
         return new ConfigDatasource(
             $this->entityManager,
             $this->createStub(FilterState::class),
             $this->cacheManager,
             new ParameterBag(['lle_config.using_tenant' => false]),
-            null,
             $accessChecker,
         );
     }

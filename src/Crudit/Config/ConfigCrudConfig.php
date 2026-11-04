@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lle\ConfigBundle\Crudit\Config;
 
 use Lle\ConfigBundle\Contracts\ConfigInterface;
+use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\ConfigBundle\Service\ValueFieldResolver;
 use Lle\CruditBundle\Brick\ListBrick\ListConfig;
 use Lle\CruditBundle\Dto\Field\Field;
@@ -22,6 +23,7 @@ class ConfigCrudConfig extends AbstractCrudConfig
 
     public function __construct(
         ConfigDatasource $datasource,
+        protected ConfigAccessChecker $accessChecker,
         protected ValueFieldResolver $valueFieldResolver = new ValueFieldResolver(),
     )
     {
@@ -31,7 +33,8 @@ class ConfigCrudConfig extends AbstractCrudConfig
     /**
      * Fields the editdata route may change (checked server side by Crudit >= 1.21, lle_crudit.eip_strict).
      * The value cells are written by hand in _value.html.twig, so they are declared here: only the value field
-     * matching the stored value type is editable; group, label, valueType, tenantId… are refused.
+     * matching the stored value type is editable, with the group roles (ConfigAccessChecker::canEditValue());
+     * group, label, valueType, tenantId… are refused. Crudit runs editableIf on the stored configuration.
      * Without effect on an older Crudit, which does not call this method.
      *
      * @return Field[]
@@ -44,7 +47,8 @@ class ConfigCrudConfig extends AbstractCrudConfig
                 ->setEditable(self::EDIT_DATA_ROUTE)
                 ->setEditableIf(
                     fn (ConfigInterface $config): bool
-                        => $this->valueFieldResolver->getFieldFor($config->getValueType()) === $valueField,
+                        => $this->valueFieldResolver->getFieldFor($config->getValueType()) === $valueField
+                        && $this->accessChecker->canEditValue($config),
                 );
         }
 

@@ -257,6 +257,17 @@ Do not use set*(), because it will overwrite defined configurations.
   the EntityManager, so the pending changes of the calling code are left untouched.
 - `set*()` is a write: it flushes the EntityManager, as before.
 
+### Configuration screen
+
+Values are edited in place on the list (`/config`), through the Crudit `editdata` route. With Crudit 1.21 or later
+(`lle_crudit.eip_strict`, enabled by default), `editdata` only accepts the fields returned by `getEipFields()`: the bundle
+declares there the value field of each type (`valueBool`, `valueString` for String and Password, `valueText`, `valueInt`,
+`valueFloat`), editable only on a configuration of that type. Any other field (`group`, `valueType`, `tri`…) is refused
+with a 403. Nothing to configure in the application.
+
+The list displays up to 500 configurations on one page. Beyond that, the group sidebar only lists the groups of the
+current page.
+
 ## Restrict access by group (roles)
 
 By default everybody who can open the configuration screen sees and edits every configuration. With the `group_roles`
@@ -291,15 +302,22 @@ composer require 2lenet/credential-bundle
 `<GROUP>` is the group name in upper case, slugged with `_` as separator: `Saferpay` becomes `SAFERPAY`,
 `Payment Service` becomes `PAYMENT_SERVICE`.
 
+Accents and separators are dropped by the slug, so groups whose names only differ by them **share their roles**:
+`Généralités` and `Generalites`, or `Payment-Service` and `Payment Service`. A group named with symbols only (`***`)
+has an empty slug: it gets no group role and is only reached by the `*_ALL` roles.
+
 Rules:
 
 - `EDIT` implies `SHOW`.
 - `SECRET` alone does **not** make a group visible: the group also needs `SHOW` or `EDIT`.
 - A **Password** configuration is masked (`••••••••`) and never sent in the HTML without `SECRET`.
   With `SECRET` and `SHOW` it is revealed on click, in read only. Editing it requires `EDIT` **and** `SECRET`.
-- A group without any role is not listed, and its configurations answer "not found" on a direct URL.
-- Writes are checked on the server too: a refused change is not saved, a configuration cannot be moved to another
-  group and a Password cannot be turned into another type without the right to edit it.
+- A group without any role is not listed, and its configurations answer "not found" on a direct URL. The in-place
+  edit of such a configuration answers 400 (bad request), not 403: the existence of the configuration is not revealed.
+- Writes are checked on the server too: only the value field of the configuration type can change, with the rights
+  above. A refused change is not saved: a configuration cannot be moved to another group, a Password cannot be turned
+  into another type, and no other field of the entity can be written from the screen.
+- The SecurityBundle is needed: without it, the option refuses everything.
 
 Do not add these roles to `role_hierarchy`: the credential bundle manages them.
 

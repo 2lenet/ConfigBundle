@@ -9,14 +9,8 @@
 {% set type_bool = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::BOOL') %}
 {% set type_password = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::PASSWORD') %}
 {% set type_text = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::TEXT') %}
-{% set value_fields = {
-    (type_bool): 'valueBool',
-    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::STRING')): 'valueString',
-    (type_password): 'valueString',
-    (type_text): 'valueText',
-    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::INT')): 'valueInt',
-    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::FLOAT')): 'valueFloat',
-} %}
+{# same mapping as the server side checks (ConfigCrudConfig::getEipFields(), ConfigDatasource::canSave()) #}
+{% set value_fields = constant('Lle\\ConfigBundle\\Service\\ValueFieldResolver::VALUE_FIELDS') %}
 {% set input_types = {
     (type_password): 'password',
     (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::INT')): 'number',
@@ -31,7 +25,7 @@
     {% set can_edit = lle_config_can_edit_value(config) %}
     {% set can_see_value = lle_config_can_see_value(config) %}
     {% set multiline_class = value_type == type_text ? ' multiline' : '' %}
-    {% set edit_url = can_edit ? path('lle_config_crudit_config_editdata', {id: config.id}) : null %}
+    {% set edit_url = can_edit ? path(constant('Lle\\ConfigBundle\\Crudit\\Config\\ConfigCrudConfig::EDIT_DATA_ROUTE'), {id: config.id}) : null %}
 
     {% if value_type == type_bool %}
         {% if can_edit %}

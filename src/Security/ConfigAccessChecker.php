@@ -30,8 +30,12 @@ class ConfigAccessChecker
     public const SCOPE_ALL = 'ALL';
     public const SEPARATOR = '_';
 
+    /**
+     * @param AuthorizationCheckerInterface|null $authorizationChecker null without the SecurityBundle:
+     *                                                               everything is then refused while the option is enabled
+     */
     public function __construct(
-        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected ?AuthorizationCheckerInterface $authorizationChecker,
         #[Autowire(param: 'lle_config.group_roles')]
         protected bool $groupRoles,
     ) {
@@ -81,13 +85,17 @@ class ConfigAccessChecker
     }
 
     /**
-     * @return array<string, string> role per action, for one group
+     * @return array<string, string> role per action, for one group; none for a group whose slug is empty
+     *                               (only symbols): it is only reached by the *_ALL roles
      */
     public function getRolesFor(string $group): array
     {
         $roles = [];
         foreach (self::ACTIONS as $action) {
-            $roles[$action] = $this->buildGroupRole($action, $group);
+            $role = $this->buildGroupRole($action, $group);
+            if ($role !== null) {
+                $roles[$action] = $role;
+            }
         }
 
         return $roles;
@@ -120,16 +128,27 @@ class ConfigAccessChecker
             return true;
         }
 
+        if ($this->authorizationChecker === null) {
+            return false;
+        }
+
         if ($this->authorizationChecker->isGranted($this->buildGlobalRole($action))) {
             return true;
         }
 
-        return $group !== null && $this->authorizationChecker->isGranted($this->buildGroupRole($action, $group));
+        $groupRole = $group === null ? null : $this->buildGroupRole($action, $group);
+
+        return $groupRole !== null && $this->authorizationChecker->isGranted($groupRole);
     }
 
-    protected function buildGroupRole(string $action, string $group): string
+    protected function buildGroupRole(string $action, string $group): ?string
     {
-        return implode(self::SEPARATOR, [self::ROLE_PREFIX . $action, self::SCOPE_GROUP, $this->getGroupSlug($group)]);
+        $slug = $this->getGroupSlug($group);
+        if ($slug === '') {
+            return null;
+        }
+
+        return implode(self::SEPARATOR, [self::ROLE_PREFIX . $action, self::SCOPE_GROUP, $slug]);
     }
 
     protected function buildGlobalRole(string $action): string

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Contracts\TenantInterface;
 use Lle\ConfigBundle\Security\ConfigAccessChecker;
+use Lle\ConfigBundle\Service\ValueFieldResolver;
 use Lle\CruditBundle\Datasource\AbstractDoctrineDatasource;
 use Lle\CruditBundle\Datasource\DatasourceParams;
 use Lle\CruditBundle\Filter\FilterState;
@@ -17,8 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ConfigDatasource extends AbstractDoctrineDatasource
 {
-    /** Fields identifying a configuration: never changed from the screen when the group roles are enabled. */
-    public const IDENTITY_FIELDS = ['group', 'label', 'valueType', 'tenantId'];
+    public const VALUE_TYPE_FIELD = 'valueType';
     public const ACCESS_DENIED_MESSAGE = 'Configuration change not allowed for this group.';
 
     public function __construct(
@@ -26,8 +26,9 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         FilterState $filterState,
         protected CacheManager $cache,
         protected ParameterBagInterface $parameterBag,
+        protected ConfigAccessChecker $accessChecker,
         protected ?TenantInterface $tenantService = null,
-        protected ?ConfigAccessChecker $accessChecker = null,
+        protected ValueFieldResolver $valueFieldResolver = new ValueFieldResolver(),
     ) {
         parent::__construct($entityManager, $filterState);
     }
@@ -76,6 +77,17 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         }
 
         return $result;
+    }
+
+    /**
+     * Same configurations as list() (visible groups, tenant line instead of the global one), whatever the page:
+     * the pager compares it with the page size.
+     */
+    public function count(?DatasourceParams $requestParams): int
+    {
+        $allPagesParams = $requestParams === null ? null : (clone $requestParams)->setLimit(0)->setOffset(0);
+
+        return count([...$this->list($allPagesParams)]);
     }
 
     /**
@@ -167,29 +179,27 @@ class ConfigDatasource extends AbstractDoctrineDatasource
 
     protected function canView(ConfigInterface $config): bool
     {
-        return $this->accessChecker === null || $this->accessChecker->canView($config->getGroup());
+        return $this->accessChecker->canView($config->getGroup());
     }
 
     /**
-     * Rights checked on the stored configuration: the in-place edit accepts any field (group, valueType…),
-     * so a change of an identity field is refused, otherwise a secret could be turned into a plain value
-     * or a configuration moved to a group the user can edit.
+     * Defence in depth behind the editdata checks of Crudit (getEipFields(), lle_crudit.eip_strict), rights checked
+     * on the stored configuration: only the value field of the stored type may change. Any other change (group,
+     * valueType, tri, another value field, a field added later to the entity…) is refused, otherwise a secret could
+     * be turned into a plain value or a configuration moved to a group the user can edit.
      */
     protected function canSave(ConfigInterface $config): bool
     {
-        if ($this->accessChecker === null || !$this->accessChecker->isEnabled()) {
+        if (!$this->accessChecker->isEnabled()) {
             return true;
         }
 
         $storedData = $this->entityManager->getUnitOfWork()->getOriginalEntityData($config);
-        $currentData = [
-            'group' => $config->getGroup(),
-            'label' => $config->getLabel(),
-            'valueType' => $config->getValueType(),
-            'tenantId' => $config->getTenantId(),
-        ];
-        foreach (self::IDENTITY_FIELDS as $field) {
-            if (array_key_exists($field, $storedData) && $storedData[$field] !== $currentData[$field]) {
+        $storedValueType = $storedData[self::VALUE_TYPE_FIELD] ?? $config->getValueType();
+        $editableField = $this->valueFieldResolver->getFieldFor(is_string($storedValueType) ? $storedValueType : null);
+        $metadata = $this->entityManager->getClassMetadata($config::class);
+        foreach ($storedData as $field => $storedValue) {
+            if ($field !== $editableField && $metadata->hasField($field) && $metadata->getFieldValue($config, $field) !== $storedValue) {
                 return false;
             }
         }

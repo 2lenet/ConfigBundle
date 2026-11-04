@@ -9,6 +9,7 @@ use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\ConfigBundle\Tests\Fixtures\Config;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ConfigAccessCheckerTest extends TestCase
@@ -22,6 +23,9 @@ class ConfigAccessCheckerTest extends TestCase
     private const ROLE_SHOW_ALL = 'ROLE_CONFIG_ACTION_SHOW_ALL';
     private const ROLE_EDIT_ALL = 'ROLE_CONFIG_ACTION_EDIT_ALL';
     private const ROLE_SECRET_ALL = 'ROLE_CONFIG_ACTION_SECRET_ALL';
+    private const ROLE_EMPTY_SLUG_SHOW = 'ROLE_CONFIG_ACTION_SHOW_GROUP_';
+
+    private const PARAMETER_GROUP_ROLES = 'lle_config.group_roles';
 
     /**
      * @return iterable<string, array{string, string}>
@@ -166,6 +170,69 @@ class ConfigAccessCheckerTest extends TestCase
 
         self::assertTrue($checker->canSeeValue($password));
         self::assertTrue($checker->canEditValue($password));
+    }
+
+    public function testEverythingIsAllowedWithoutSecurityWhenGroupRolesAreDisabled(): void
+    {
+        $checker = new ConfigAccessChecker(null, false);
+
+        self::assertTrue($checker->canView(self::GROUP_PAYMENT));
+        self::assertTrue($checker->canEditValue($this->createConfig(ConfigInterface::PASSWORD)));
+    }
+
+    /**
+     * Group roles enabled in an application without the SecurityBundle: fail closed.
+     */
+    public function testNothingIsAllowedWithoutSecurityWhenGroupRolesAreEnabled(): void
+    {
+        $checker = new ConfigAccessChecker(null, true);
+
+        self::assertFalse($checker->canView(self::GROUP_PAYMENT));
+        self::assertFalse($checker->canEdit(self::GROUP_PAYMENT));
+        self::assertFalse($checker->canSeeSecret(self::GROUP_PAYMENT));
+    }
+
+    /**
+     * The checker is always registered by services.yaml: it must compile without security.authorization_checker.
+     */
+    public function testCheckerIsAutowiredWithoutTheSecurityBundle(): void
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter(self::PARAMETER_GROUP_ROLES, true);
+        $container->register(ConfigAccessChecker::class)->setAutowired(true)->setPublic(true);
+        $container->compile();
+
+        $checker = $container->get(ConfigAccessChecker::class);
+
+        self::assertInstanceOf(ConfigAccessChecker::class, $checker);
+        self::assertFalse($checker->canView(self::GROUP_PAYMENT));
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function emptySlugGroupProvider(): iterable
+    {
+        yield 'symbols' => ['***'];
+        yield 'spaces' => ['   '];
+        yield 'empty' => [''];
+    }
+
+    #[DataProvider('emptySlugGroupProvider')]
+    public function testAGroupWithAnEmptySlugHasNoGroupRole(string $group): void
+    {
+        $checker = $this->createChecker(true, [self::ROLE_EMPTY_SLUG_SHOW]);
+
+        self::assertSame([], $checker->getRolesFor($group));
+        self::assertFalse($checker->canView($group));
+    }
+
+    #[DataProvider('emptySlugGroupProvider')]
+    public function testAGroupWithAnEmptySlugIsReachedByTheGlobalRoles(string $group): void
+    {
+        $checker = $this->createChecker(true, [self::ROLE_SHOW_ALL]);
+
+        self::assertTrue($checker->canView($group));
     }
 
     /**

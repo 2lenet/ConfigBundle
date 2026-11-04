@@ -7,9 +7,12 @@ namespace Lle\ConfigBundle\Tests\Crudit;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Crudit\Config\ConfigCrudConfig;
 use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
+use Lle\ConfigBundle\Security\ConfigAccessChecker;
+use Lle\ConfigBundle\Tests\Fixtures\Config;
 use Lle\CruditBundle\Dto\Field\Field;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Crudit >= 1.21 (lle_crudit.eip_strict) only lets editdata change the fields returned by getEipFields():
@@ -17,9 +20,14 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigCrudConfigEipFieldsTest extends TestCase
 {
+    private const GROUP = 'Saferpay';
+    private const ROLE_SHOW = 'ROLE_CONFIG_ACTION_SHOW_GROUP_SAFERPAY';
+    private const ROLE_EDIT = 'ROLE_CONFIG_ACTION_EDIT_GROUP_SAFERPAY';
+    private const ROLE_SECRET = 'ROLE_CONFIG_ACTION_SECRET_GROUP_SAFERPAY';
+
     public function testTheValueFieldsAreEditableInPlaceThroughTheConfigRoute(): void
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
+        $crudConfig = $this->createCrudConfig(false, []);
 
         $eipFields = $crudConfig->getEipFields();
 
@@ -35,7 +43,7 @@ class ConfigCrudConfigEipFieldsTest extends TestCase
 
     public function testIdentityFieldsAreNotEditableInPlace(): void
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
+        $crudConfig = $this->createCrudConfig(false, []);
 
         $names = array_map(static fn (Field $field): string => $field->getName(), $crudConfig->getEipFields());
 
@@ -63,12 +71,56 @@ class ConfigCrudConfigEipFieldsTest extends TestCase
     #[DataProvider('valueTypeProvider')]
     public function testOnlyTheFieldOfTheValueTypeIsEditable(string $valueType, string $expectedField): void
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
-        $config = $this->createMock(ConfigInterface::class);
-        $config->method('getValueType')->willReturn($valueType);
+        $crudConfig = $this->createCrudConfig(false, []);
+
+        self::assertSame([$expectedField], $this->findEditableFields($crudConfig, $this->createConfig($valueType)));
+    }
+
+    public function testNoFieldIsEditableForAnUnknownValueType(): void
+    {
+        $crudConfig = $this->createCrudConfig(false, []);
+
+        self::assertSame([], $this->findEditableFields($crudConfig, $this->createConfig('Unknown')));
+    }
+
+    public function testNoFieldIsEditableWithoutEditRole(): void
+    {
+        $crudConfig = $this->createCrudConfig(true, [self::ROLE_SHOW]);
+
+        self::assertSame([], $this->findEditableFields($crudConfig, $this->createConfig(ConfigInterface::STRING)));
+    }
+
+    public function testTheValueIsEditableWithEditRole(): void
+    {
+        $crudConfig = $this->createCrudConfig(true, [self::ROLE_EDIT]);
+
+        self::assertSame(['valueString'], $this->findEditableFields($crudConfig, $this->createConfig(ConfigInterface::STRING)));
+    }
+
+    public function testASecretIsNotEditableWithoutSecretRole(): void
+    {
+        $crudConfig = $this->createCrudConfig(true, [self::ROLE_EDIT]);
+
+        self::assertSame([], $this->findEditableFields($crudConfig, $this->createConfig(ConfigInterface::PASSWORD)));
+    }
+
+    public function testASecretIsEditableWithEditAndSecretRoles(): void
+    {
+        $crudConfig = $this->createCrudConfig(true, [self::ROLE_EDIT, self::ROLE_SECRET]);
+
+        self::assertSame(['valueString'], $this->findEditableFields($crudConfig, $this->createConfig(ConfigInterface::PASSWORD)));
+    }
+
+    /**
+     * @return string[] names of the fields whose editableIf accepts the configuration
+     */
+    private function findEditableFields(ConfigCrudConfig $crudConfig, ConfigInterface $config): array
+    {
+        $eipFields = $crudConfig->getEipFields();
+        self::assertNotEmpty($eipFields);
 
         $editableFields = [];
-        foreach ($crudConfig->getEipFields() as $field) {
+        foreach ($eipFields as $field) {
             $editableIf = $field->getEditableIf();
             self::assertNotNull($editableIf);
             if ($editableIf($config)) {
@@ -76,22 +128,27 @@ class ConfigCrudConfigEipFieldsTest extends TestCase
             }
         }
 
-        self::assertSame([$expectedField], $editableFields);
+        return $editableFields;
     }
 
-    public function testNoFieldIsEditableForAnUnknownValueType(): void
+    /**
+     * @param string[] $grantedRoles
+     */
+    private function createCrudConfig(bool $groupRoles, array $grantedRoles): ConfigCrudConfig
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
-        $config = $this->createMock(ConfigInterface::class);
-        $config->method('getValueType')->willReturn('Unknown');
+        $authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
+        $authorizationChecker
+            ->method('isGranted')
+            ->willReturnCallback(static fn (mixed $attribute): bool => in_array($attribute, $grantedRoles, true));
 
-        $eipFields = $crudConfig->getEipFields();
+        return new ConfigCrudConfig(
+            $this->createStub(ConfigDatasource::class),
+            new ConfigAccessChecker($authorizationChecker, $groupRoles),
+        );
+    }
 
-        self::assertNotEmpty($eipFields);
-        foreach ($eipFields as $field) {
-            $editableIf = $field->getEditableIf();
-            self::assertNotNull($editableIf);
-            self::assertFalse($editableIf($config));
-        }
+    private function createConfig(string $valueType): Config
+    {
+        return Config::create(self::GROUP, 'login')->setValueType($valueType);
     }
 }

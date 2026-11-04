@@ -6,6 +6,7 @@ namespace Lle\ConfigBundle\Tests\Crudit;
 
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
+use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\ConfigBundle\Tests\Fixtures\Config;
 use Lle\ConfigBundle\Tests\Support\DoctrineTestCase;
 use Lle\CruditBundle\Filter\FilterState;
@@ -81,6 +82,7 @@ class ConfigDatasourceTest extends DoctrineTestCase
             $this->createMock(FilterState::class),
             $this->cacheManager,
             new ParameterBag(['lle_config.using_tenant' => false]),
+            new ConfigAccessChecker(null, false),
         );
     }
 

@@ -6,6 +6,7 @@ namespace Lle\ConfigBundle\Tests\Crudit;
 
 use Lle\ConfigBundle\Crudit\Config\ConfigCrudConfig;
 use Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource;
+use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\CruditBundle\Brick\ListBrick\ListConfig;
 use Lle\CruditBundle\Contracts\CrudConfigInterface;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,7 @@ class ConfigCrudConfigTest extends TestCase
 {
     public function testListUsesTheGroupedConfigurationTemplate(): void
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
+        $crudConfig = $this->createCrudConfig();
 
         $listConfigs = array_values(array_filter(
             $crudConfig->getBrickConfigs()[CrudConfigInterface::INDEX],
@@ -27,10 +28,15 @@ class ConfigCrudConfigTest extends TestCase
 
     public function testShowPageKeepsTheDefaultTemplates(): void
     {
-        $crudConfig = new ConfigCrudConfig($this->createMock(ConfigDatasource::class));
+        $crudConfig = $this->createCrudConfig();
 
         foreach ($crudConfig->getBrickConfigs()[CrudConfigInterface::SHOW] as $brickConfig) {
             self::assertNull($brickConfig->getTemplate());
         }
+    }
+
+    private function createCrudConfig(): ConfigCrudConfig
+    {
+        return new ConfigCrudConfig($this->createStub(ConfigDatasource::class), new ConfigAccessChecker(null, false));
     }
 }

@@ -79,6 +79,15 @@ class ConfigCredentialWarmupTest extends DoctrineTestCase
         self::assertCount(6, $this->findRoles());
     }
 
+    public function testNoGroupRoleIsCreatedForAGroupWithAnEmptySlug(): void
+    {
+        $this->saveConfig($this->createConfig('***', 'login', null));
+
+        $this->createWarmup(true)->warmUp();
+
+        self::assertSame(['ROLE_CONFIG_ACTION_EDIT_ALL', 'ROLE_CONFIG_ACTION_SECRET_ALL', 'ROLE_CONFIG_ACTION_SHOW_ALL'], $this->findRoles());
+    }
+
     protected function getEntityDirectories(): array
     {
         return [...parent::getEntityDirectories(), self::CREDENTIAL_ENTITY_DIRECTORY];
