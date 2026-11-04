@@ -34,13 +34,16 @@ abstract class DoctrineTestCase extends TestCase
 
     protected function setUp(): void
     {
-        $configuration = ORMSetup::createAttributeMetadataConfiguration([self::FIXTURES_DIRECTORY], true);
+        $configuration = ORMSetup::createAttributeMetadataConfiguration($this->getEntityDirectories(), true);
         // ORM 3 on PHP 8.4; ORM 2 (used by some projects) has no such method and generates its proxies itself
         if (method_exists($configuration, 'enableNativeLazyObjects')) { // @phpstan-ignore function.alreadyNarrowedType
             $configuration->enableNativeLazyObjects(true);
         }
         // same column names as a Symfony project (value_string, tenant_id…)
         $configuration->setNamingStrategy(new UnderscoreNamingStrategy(CASE_LOWER));
+        $registry = $this->createMock(ManagerRegistry::class);
+        $repositoryFactory = new RegistryRepositoryFactory($registry);
+        $configuration->setRepositoryFactory($repositoryFactory);
 
         $resolveTargetEntity = new ResolveTargetEntityListener();
         $resolveTargetEntity->addResolveTargetEntity(ConfigInterface::class, Config::class, []);
@@ -51,11 +54,19 @@ abstract class DoctrineTestCase extends TestCase
         $this->entityManager = new EntityManager($connection, $configuration, $eventManager);
         (new SchemaTool($this->entityManager))->createSchema($this->entityManager->getMetadataFactory()->getAllMetadata());
 
-        $registry = $this->createMock(ManagerRegistry::class);
         $registry->method('getManagerForClass')->willReturn($this->entityManager);
 
         $this->cacheManager = new CacheManager(new ArrayAdapter());
         $this->repository = new ConfigRepository($this->cacheManager, $registry);
+        $repositoryFactory->setRepository(Config::class, $this->repository);
+    }
+
+    /**
+     * @return string[] directories of the mapped entities
+     */
+    protected function getEntityDirectories(): array
+    {
+        return [self::FIXTURES_DIRECTORY];
     }
 
     protected function saveConfig(Config $config): Config

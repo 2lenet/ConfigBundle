@@ -5,7 +5,10 @@ services:
 
     Lle\ConfigBundle\:
         resource: '../../'
-        exclude: '../../Dto/'
+        # the credential warmup is registered by LleConfigExtension, only when the credential bundle is installed
+        exclude:
+            - '../../Dto/'
+            - '../../Security/ConfigCredentialWarmup.php'
 
     Lle\ConfigBundle\Twig\ConfigExtension:
         arguments:

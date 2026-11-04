@@ -1,123 +1,98 @@
-{% if view.resource.valueType == "Bool" %}
-    <div class="crudit-eip" data-field="valueBool"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <div class="form-check form-switch">
-            <input
-                class="form-check-input crudit-eip-input crudit-eip-submit"
-                type="checkbox"
-                autocomplete="off"
-                id="valueBool" {% if view.resource.valueBool == true %}checked{% endif %}>
+{#
+    Value of a configuration, on the list and on the Crudit show page.
+    Editable: Crudit in-place edit markup (crudit-eip, crudit-eip-input, crudit-eip-value…), unchanged.
+    Read only (no EDIT role on the group, see ConfigAccessChecker): plain display, no form.
+    A secret (Password) is never in the HTML without the SECRET role of its group.
+#}
+{% set config = view.resource %}
+{% set value_type = config.valueType %}
+{% set type_bool = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::BOOL') %}
+{% set type_password = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::PASSWORD') %}
+{% set type_text = constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::TEXT') %}
+{% set value_fields = {
+    (type_bool): 'valueBool',
+    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::STRING')): 'valueString',
+    (type_password): 'valueString',
+    (type_text): 'valueText',
+    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::INT')): 'valueInt',
+    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::FLOAT')): 'valueFloat',
+} %}
+{% set input_types = {
+    (type_password): 'password',
+    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::INT')): 'number',
+    (constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::FLOAT')): 'number',
+} %}
+{# fixed-length mask: the real length is not revealed #}
+{% set secret_mask = '••••••••' %}
+
+{% if value_fields[value_type] is defined %}
+    {% set value_field = value_fields[value_type] %}
+    {% set value = attribute(config, value_field) %}
+    {% set can_edit = lle_config_can_edit_value(config) %}
+    {% set can_see_value = lle_config_can_see_value(config) %}
+    {% set multiline_class = value_type == type_text ? ' multiline' : '' %}
+    {% set edit_url = can_edit ? path('lle_config_crudit_config_editdata', {id: config.id}) : null %}
+
+    {% if value_type == type_bool %}
+        {% if can_edit %}
+            <div class="crudit-eip" data-field="{{ value_field }}" data-edit_url="{{ edit_url }}">
+                <div class="form-check form-switch">
+                    <input
+                        class="form-check-input crudit-eip-input crudit-eip-submit"
+                        type="checkbox"
+                        autocomplete="off"
+                        id="valueBool" {% if value == true %}checked{% endif %}>
+                </div>
+            </div>
+        {% else %}
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" autocomplete="off" disabled {% if value == true %}checked{% endif %}>
+            </div>
+        {% endif %}
+    {% elseif can_edit %}
+        <div class="crudit-eip" data-field="{{ value_field }}" data-edit_url="{{ edit_url }}">
+            <form class="form-inline d-none">
+                <div class="control-group form-group d-flex justify-content-around align-items-center">
+                    {% if value_type == type_text %}
+                        <textarea type="text" class="form-control form-control-sm crudit-eip-input multiline"
+                                  autocomplete="off" rows="8">{{ value }}</textarea>
+                    {% else %}
+                        {% set input_type = input_types[value_type] ?? 'text' %}
+                        <input type="{{ input_type }}" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
+                               value="{{ value }}"{% if input_type == 'number' %} required{% endif %}>
+                    {% endif %}
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-primary crudit-eip-submit">
+                            <i class="fa fa-check"></i>
+                        </button>
+                        <button type="button" class="btn btn-default crudit-eip-cancel">
+                            <i class="fa fa-close"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="editable-error-block help-block" style="display: none;">
+                </div>
+            </form>
+            <div class="crudit-eip-value{{ multiline_class }}">
+                {%- if value_type == type_password -%}
+                    {%- if value is not empty %}{{ secret_mask }}{% endif -%}
+                {%- else -%}
+                    {{ value }}
+                {%- endif -%}
+            </div>
         </div>
-    </div>
-{% endif %}
-{% if view.resource.valueType == "String" %}
-    <div class="crudit-eip" data-field="valueString"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <form class="form-inline d-none">
-            <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="text" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueString }}">
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary crudit-eip-submit">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default crudit-eip-cancel">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="editable-error-block help-block" style="display: none;">
-            </div>
-        </form>
-        <div class="crudit-eip-value">{{ view.resource.valueString }}</div>
-    </div>
-{% endif %}
-{% if view.resource.valueType == "Password" %}
-    <div class="crudit-eip" data-field="valueString"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <form class="form-inline d-none">
-            <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="password" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueString }}">
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary crudit-eip-submit">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default crudit-eip-cancel">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="editable-error-block help-block" style="display: none;">
-            </div>
-        </form>
-        {# fixed-length mask: the real length is not revealed #}
-        <div class="crudit-eip-value">{% if view.resource.valueString is not empty %}••••••••{% endif %}</div>
-    </div>
-{% endif %}
-{% if view.resource.valueType == "Text" %}
-    <div class="crudit-eip" data-field="valueText"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <form class="form-inline d-none">
-            <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <textarea type="text" class="form-control form-control-sm crudit-eip-input multiline"
-                          autocomplete="off" rows="8">{{ view.resource.valueText }}</textarea>
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary crudit-eip-submit">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default crudit-eip-cancel">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="editable-error-block help-block" style="display: none;">
-            </div>
-        </form>
-        <div class="crudit-eip-value multiline">{{ view.resource.valueText }}</div>
-    </div>
-{% endif %}
-{% if view.resource.valueType == "Int" %}
-    <div class="crudit-eip" data-field="valueInt"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <form class="form-inline d-none">
-            <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="number" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueInt }}" required>
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary crudit-eip-submit">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default crudit-eip-cancel">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="editable-error-block help-block" style="display: none;">
-            </div>
-        </form>
-        <div class="crudit-eip-value">{{ view.resource.valueInt }}</div>
-    </div>
-{% endif %}
-{% if view.resource.valueType == constant('Lle\\ConfigBundle\\Contracts\\ConfigInterface::FLOAT') %}
-    <div class="crudit-eip" data-field="valueFloat"
-         data-edit_url="{{ path('lle_config_crudit_config_editdata', { id: view.resource.id }) }}">
-        <form class="form-inline d-none">
-            <div class="control-group form-group d-flex justify-content-around align-items-center">
-                <input type="number" class="form-control form-control-sm crudit-eip-input" autocomplete="off"
-                       value="{{ view.resource.valueFloat }}" required>
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-primary crudit-eip-submit">
-                        <i class="fa fa-check"></i>
-                    </button>
-                    <button type="button" class="btn btn-default crudit-eip-cancel">
-                        <i class="fa fa-close"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="editable-error-block help-block" style="display: none;">
-            </div>
-        </form>
-        <div class="crudit-eip-value">{{ view.resource.valueFloat }}</div>
-    </div>
+    {% elseif value_type == type_password and value is not empty and can_see_value %}
+        <details class="lle-config__secret">
+            <summary>{{ secret_mask }}</summary>
+            <span class="lle-config__secret-value">{{ value }}</span>
+        </details>
+    {% else %}
+        <div class="lle-config__readonly{{ multiline_class }}">
+            {%- if value_type == type_password -%}
+                {%- if value is not empty %}{{ secret_mask }}{% endif -%}
+            {%- else -%}
+                {{ value }}
+            {%- endif -%}
+        </div>
+    {% endif %}
 {% endif %}

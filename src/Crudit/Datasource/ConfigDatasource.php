@@ -7,20 +7,27 @@ namespace Lle\ConfigBundle\Crudit\Datasource;
 use Doctrine\ORM\EntityManagerInterface;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Contracts\TenantInterface;
+use Lle\ConfigBundle\Security\ConfigAccessChecker;
 use Lle\CruditBundle\Datasource\AbstractDoctrineDatasource;
 use Lle\CruditBundle\Datasource\DatasourceParams;
 use Lle\CruditBundle\Filter\FilterState;
 use Lle\ConfigBundle\Service\CacheManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ConfigDatasource extends AbstractDoctrineDatasource
 {
+    /** Fields identifying a configuration: never changed from the screen when the group roles are enabled. */
+    public const IDENTITY_FIELDS = ['group', 'label', 'valueType', 'tenantId'];
+    public const ACCESS_DENIED_MESSAGE = 'Configuration change not allowed for this group.';
+
     public function __construct(
         EntityManagerInterface $entityManager,
         FilterState $filterState,
         protected CacheManager $cache,
         protected ParameterBagInterface $parameterBag,
         protected ?TenantInterface $tenantService = null,
+        protected ?ConfigAccessChecker $accessChecker = null,
     ) {
         parent::__construct($entityManager, $filterState);
     }
@@ -32,10 +39,27 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         return $metadata->name;
     }
 
+    /**
+     * A configuration of a group the user cannot see is "not found" (show page, in-place edit).
+     */
+    public function get($id): ?object
+    {
+        /** @var ConfigInterface|null $config */
+        $config = parent::get($id);
+        if ($config === null || !$this->canView($config)) {
+            return null;
+        }
+
+        return $config;
+    }
+
     public function list(?DatasourceParams $requestParams): iterable
     {
         /** @var ConfigInterface[] $list */
-        $list = parent::list($requestParams);
+        $list = array_filter(
+            [...parent::list($requestParams)],
+            fn (ConfigInterface $config): bool => $this->canView($config),
+        );
 
         $resultWithTenant = [];
         foreach ($list as $item) {
@@ -59,6 +83,15 @@ class ConfigDatasource extends AbstractDoctrineDatasource
      */
     public function save(object $resource): bool
     {
+        if (!$this->canSave($resource)) {
+            // the in-place edit has already changed the entity: reload it so that a later flush() cannot write it
+            if ($this->entityManager->contains($resource)) {
+                $this->entityManager->refresh($resource);
+            }
+
+            throw new AccessDeniedException(self::ACCESS_DENIED_MESSAGE);
+        }
+
         // an empty text field arrives as null: store an empty string ("0" is a value, not an empty field)
         if (in_array($resource->getValueType(), [ConfigInterface::PASSWORD, ConfigInterface::STRING]) && $resource->getValueString() === null) {
             $resource->setValueString('');
@@ -130,5 +163,37 @@ class ConfigDatasource extends AbstractDoctrineDatasource
         }
 
         return true;
+    }
+
+    protected function canView(ConfigInterface $config): bool
+    {
+        return $this->accessChecker === null || $this->accessChecker->canView($config->getGroup());
+    }
+
+    /**
+     * Rights checked on the stored configuration: the in-place edit accepts any field (group, valueType…),
+     * so a change of an identity field is refused, otherwise a secret could be turned into a plain value
+     * or a configuration moved to a group the user can edit.
+     */
+    protected function canSave(ConfigInterface $config): bool
+    {
+        if ($this->accessChecker === null || !$this->accessChecker->isEnabled()) {
+            return true;
+        }
+
+        $storedData = $this->entityManager->getUnitOfWork()->getOriginalEntityData($config);
+        $currentData = [
+            'group' => $config->getGroup(),
+            'label' => $config->getLabel(),
+            'valueType' => $config->getValueType(),
+            'tenantId' => $config->getTenantId(),
+        ];
+        foreach (self::IDENTITY_FIELDS as $field) {
+            if (array_key_exists($field, $storedData) && $storedData[$field] !== $currentData[$field]) {
+                return false;
+            }
+        }
+
+        return $this->accessChecker->canEditValue($config);
     }
 }

@@ -217,6 +217,47 @@
     white-space: pre-line;
 }
 
+/* Read only (no EDIT role on the group): same box as the editable value, without the pen */
+.lle-config__readonly {
+    display: inline-block;
+    max-width: 100%;
+    min-height: 1.5rem;
+    padding: 0.1rem 0;
+    overflow-wrap: anywhere;
+}
+
+.lle-config__readonly:empty::before {
+    content: "—";
+    color: var(--lle-config-muted);
+}
+
+.lle-config__readonly.multiline {
+    white-space: pre-line;
+}
+
+/* Secret readable with the SECRET role, revealed on click (no JS) */
+.lle-config__secret summary {
+    display: inline-block;
+    cursor: pointer;
+    list-style: none;
+    border-radius: 6px;
+    padding: 0.1rem 0.35rem;
+    margin: 0 -0.35rem;
+}
+
+.lle-config__secret summary::-webkit-details-marker {
+    display: none;
+}
+
+.lle-config__secret summary:hover {
+    background: var(--lle-config-hover);
+}
+
+.lle-config__secret-value {
+    font-family: var(--lle-config-mono);
+    overflow-wrap: anywhere;
+}
+
 .lle-config .crudit-eip form .form-group {
     gap: 0.35rem;
 }
