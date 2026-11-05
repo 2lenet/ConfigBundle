@@ -1,0 +1,68 @@
+{#
+    Configuration list: group sidebar + one group displayed at a time.
+    Same data, rights and in-place edit as the Crudit list (values are rendered by _value.html.twig).
+#}
+{% set configs = view.data.lines|map(line => line.resource) %}
+{% set requested_group = app.request.query.get('group') %}
+{% set groups = lle_config_groups(configs, requested_group) %}
+{% set active_group = lle_config_active_group(configs, requested_group) %}
+{% set offset_parameter = view.config.name|lower ~ '_offset' %}
+{% set route_query = app.request.query.all|filter((value, key) => key != offset_parameter) %}
+{% set using_tenant = lle_config_using_tenant() %}
+
+<link rel="stylesheet" href="{{ asset('bundles/lleconfig/css/config.css') }}">
+
+<div class="lle-config">
+    {% if groups is empty %}
+        <p class="lle-config__empty">{{ 'crudit.pagination.noItem'|trans({}, 'LleCruditBundle') }}</p>
+    {% else %}
+        <nav class="lle-config__nav" aria-label="{{ 'navigation.label'|trans({}, 'LleConfigBundle') }}">
+            {% for group in groups %}
+                <a class="lle-config__nav-link{{ group.active ? ' is-active' }}"
+                   href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge(route_query)|merge({group: group.name})) }}"
+                   {% if group.active %}aria-current="page"{% endif %}>
+                    <span class="lle-config__nav-name">{{ group.name|lle_config_humanize }}</span>
+                    <span class="lle-config__count">{{ group.count }}</span>
+                </a>
+            {% endfor %}
+        </nav>
+
+        <section class="lle-config__group" aria-labelledby="lle-config-group-title">
+            <header class="lle-config__group-header">
+                {% set active_group_title = active_group|lle_config_humanize %}
+                <h2 class="lle-config__group-title" id="lle-config-group-title">{{ active_group_title }}</h2>
+                {% if active_group_title != active_group %}
+                    <code class="lle-config__code">{{ active_group }}</code>
+                {% endif %}
+            </header>
+
+            <dl class="lle-config__items">
+                {% for config in lle_config_group_configs(configs, active_group) %}
+                    {% set translated_label = config.transLabel|trans %}
+                    <div class="lle-config__item" id="list-{{ view.config.name|lower }}-{{ config.id }}">
+                        <dt class="lle-config__label">
+                            <span>{{ 'config.' not in translated_label ? translated_label : config.label|lle_config_humanize }}</span>
+                            {% if using_tenant %}
+                                {% if config.tenantId %}
+                                    <span class="lle-config__scope lle-config__scope--tenant">{{ 'scope.tenant'|trans({}, 'LleConfigBundle') }}</span>
+                                {% else %}
+                                    <span class="lle-config__scope">{{ 'scope.global'|trans({}, 'LleConfigBundle') }}</span>
+                                {% endif %}
+                            {% endif %}
+                        </dt>
+                        <dd class="lle-config__value">
+                            {% include '@LleConfig/_value.html.twig' with {view: {resource: config}} only %}
+                        </dd>
+                        <dd class="lle-config__code">{{ config.label }}</dd>
+                    </div>
+                {% endfor %}
+            </dl>
+        </section>
+    {% endif %}
+
+    {% if view.config.datasource_params.count > view.config.datasource_params.limit %}
+        <div class="lle-config__pager">
+            {% include '@LleCrudit/brick/list_items/_pager.html.twig' %}
+        </div>
+    {% endif %}
+</div>

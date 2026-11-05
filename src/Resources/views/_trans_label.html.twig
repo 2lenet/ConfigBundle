@@ -1,4 +1,6 @@
 {% set transLabel = resource.getTransLabel|trans %}
-{% if 'config.' not in transLabel  %}
+{% if 'config.' not in transLabel %}
     {{ transLabel }}
+{% else %}
+    {{ resource.label|lle_config_humanize }}
 {% endif %}

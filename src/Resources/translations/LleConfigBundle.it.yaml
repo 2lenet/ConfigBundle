@@ -1,0 +1,6 @@
+navigation:
+    label: "Gruppi di configurazione"
+
+scope:
+    global: "Globale"
+    tenant: "Struttura"

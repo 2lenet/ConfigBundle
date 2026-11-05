@@ -1,0 +1,6 @@
+navigation:
+    label: "Groupes de configuration"
+
+scope:
+    global: "Global"
+    tenant: "Établissement"

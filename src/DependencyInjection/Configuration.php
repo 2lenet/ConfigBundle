@@ -28,6 +28,11 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('tenant_service')
             ->defaultNull()
             ->end();
+        $children
+            ->booleanNode('group_roles')
+            ->info('Restrict the configuration screen group by group with ROLE_CONFIG_ACTION_* roles')
+            ->defaultFalse()
+            ->end();
 
         return $treeBuilder;
     }

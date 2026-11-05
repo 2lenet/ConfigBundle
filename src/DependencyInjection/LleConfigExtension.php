@@ -2,6 +2,8 @@
 
 namespace Lle\ConfigBundle\DependencyInjection;
 
+use Lle\ConfigBundle\Security\ConfigCredentialWarmup;
+use Lle\CredentialBundle\Contracts\CredentialWarmupInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -26,8 +28,16 @@ class LleConfigExtension extends Extension
         $processedConfig = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter('lle_config.using_tenant', $processedConfig['using_tenant']);
+        $container->setParameter('lle_config.group_roles', $processedConfig['group_roles']);
         if ($processedConfig['tenant_service']) {
             $container->setAlias('lle_config.tenant_service', $processedConfig['tenant_service']);
+        }
+
+        // the credential bundle is optional: tagged "credential.warmup" through its autoconfiguration
+        if (interface_exists(CredentialWarmupInterface::class)) {
+            $container->register(ConfigCredentialWarmup::class)
+                ->setAutowired(true)
+                ->setAutoconfigured(true);
         }
     }
 }

@@ -20,8 +20,8 @@ class ConfigController extends AbstractCrudController
 
     public function __construct(
         ConfigCrudConfig $config,
-        private CacheManager $cache,
-        private EntityManagerInterface $em,
+        protected CacheManager $cache,
+        protected EntityManagerInterface $em,
     ) {
         $this->config = $config;
     }
