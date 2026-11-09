@@ -117,6 +117,32 @@ bin/console doctrine:migrations:migrate
 
 You are ready to go!
 
+### Table name
+
+The bundle stores the configuration in the `lle_config` table, whatever the name of your entity class: there is no
+need to add an `ORM\Table` to it.
+
+### Upgrading from a `config` table
+
+Before this version the table was named after the entity class (`config`). Doctrine does not detect a table renaming:
+`make:migration` generates a `DROP TABLE config` and a `CREATE TABLE lle_config`, which **loses the stored
+configuration**. Replace them in the generated migration by a renaming:
+
+```php
+public function up(Schema $schema): void
+{
+    $this->addSql('ALTER TABLE config RENAME TO lle_config');
+}
+
+public function down(Schema $schema): void
+{
+    $this->addSql('ALTER TABLE lle_config RENAME TO config');
+}
+```
+
+Then run `bin/console make:migration` again: if your entity has relations, it renames their indexes and foreign keys,
+whose names are derived from the table name.
+
 ## Customization
 
 If you need more options or entity fields you can add them in your entity class:

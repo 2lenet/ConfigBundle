@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
 use Lle\ConfigBundle\Traits\ConfigTrait;
 
+// no ORM\Table, as in the projects: the table is named by ConfigTableNameListener
 #[ORM\Entity(repositoryClass: ConfigRepository::class)]
-#[ORM\Table(name: 'config')]
 class Config implements ConfigInterface
 {
     use ConfigTrait;
