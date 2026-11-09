@@ -15,6 +15,10 @@ services:
             - '@doctrine.orm.entity_manager'
         tags: [twig.extension]
 
+    Lle\ConfigBundle\EventListener\ConfigTableNameListener:
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }
+
     Lle\ConfigBundle\Crudit\Datasource\ConfigDatasource:
         arguments:
             $tenantService: '@?lle_config.tenant_service'

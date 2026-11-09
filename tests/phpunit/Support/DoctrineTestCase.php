@@ -14,6 +14,7 @@ use Doctrine\ORM\Tools\ResolveTargetEntityListener;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Persistence\ManagerRegistry;
 use Lle\ConfigBundle\Contracts\ConfigInterface;
+use Lle\ConfigBundle\EventListener\ConfigTableNameListener;
 use Lle\ConfigBundle\Service\CacheManager;
 use Lle\ConfigBundle\Tests\Fixtures\Config;
 use Lle\ConfigBundle\Tests\Fixtures\ConfigRepository;
@@ -25,7 +26,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
  */
 abstract class DoctrineTestCase extends TestCase
 {
-    protected const CONFIG_TABLE = 'config';
+    protected const CONFIG_TABLE = 'lle_config';
     protected const FIXTURES_DIRECTORY = __DIR__ . '/../Fixtures';
 
     protected EntityManager $entityManager;
@@ -49,6 +50,7 @@ abstract class DoctrineTestCase extends TestCase
         $resolveTargetEntity->addResolveTargetEntity(ConfigInterface::class, Config::class, []);
         $eventManager = new EventManager();
         $eventManager->addEventListener([Events::loadClassMetadata, Events::onClassMetadataNotFound], $resolveTargetEntity);
+        $eventManager->addEventListener([Events::loadClassMetadata], new ConfigTableNameListener());
 
         $connection = DriverManager::getConnection(['driver' => 'pdo_sqlite', 'memory' => true], $configuration);
         $this->entityManager = new EntityManager($connection, $configuration, $eventManager);
